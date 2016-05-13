@@ -8,6 +8,10 @@
     "dev": "webpack -d --watch",
     "build": "webpack -p"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kcnm/reefy.git"
+  },
   "author": "kcnm",
   "license": "ISC",
   "dependencies": {
