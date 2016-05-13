@@ -4,28 +4,22 @@ export var CodeLine = React.createClass({
   handleClick: function(event) {
     event.stopPropagation();
     var x = event.nativeEvent.offsetX;
-    var c = 0;
-    var pos = 0;
+    var col = 0;
     var width = this.props.computeLineWidth(this.props.code);
     if (x > width) {
-      c = this.props.code.length;
-      pos = width;
+      col = this.props.code.length;
     } else {
-      var dist = x;
-      var s = '';
-      for (var i = 0; i < this.props.code.length; ++i) {
-        s += this.props.code.charAt(i);
-        var p = this.props.computeLineWidth(s);
+      var minDist = x;
+      for (var i = 1; i <= this.props.code.length; ++i) {
+        var p = this.props.computeLineWidth(this.props.code.slice(0, i));
         var d = Math.abs(x - p);
-        if (d < dist) {
-          dist = d;
-          c = i;
-          pos = p;
+        if (d < minDist) {
+          minDist = d;
+          col = i;
         }
       }
     }
-    var r = this.props.lineNum;
-    this.props.moveCursor(r, c, pos, this.props.lineHeight * r);
+    this.props.moveCursorTo(this.props.lineNum, col);
   },
 
   render: function() {

@@ -21,7 +21,7 @@ export var Cursor = React.createClass({
     var style = {
       left: this.props.position.x,
       top: this.props.position.y,
-      width: this.props.inlineStyle.fontSize,
+      width: this.props.inlineStyle.fontSize * 0.5,
       height: this.props.inlineStyle.lineHeight,
       fontSize: this.props.inlineStyle.fontSize,
       fontFamily: this.props.inlineStyle.fontFamily,
@@ -38,3 +38,10 @@ export var Cursor = React.createClass({
     );
   }
 });
+
+export var Direction = {
+  UP: 'up',
+  DOWN: 'down',
+  LEFT: 'left',
+  RIGHT: 'right'
+};

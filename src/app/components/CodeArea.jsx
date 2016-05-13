@@ -7,31 +7,51 @@ export var CodeArea = React.createClass({
   getInitialState: function() {
     return {
       cursorPosition: {
-        r:0,  // Row, starting from 0.
-        c:0,  // Column, starting from 0.
-        x:0,  // Pixels to the left.
-        y:0  // Pixels to top.
+        row: 0,  // Row, starting from 0.
+        col: 0,  // Column, starting from 0.
+        x: 0,  // Pixels to the left.
+        y: 0  // Pixels to top.
       },
       lines: this.props.code.split('\n')
     };
   },
 
-  moveCursor: function(r, c, x, y) {
+  moveCursorTo: function(row, col) {
     this.setState({
-      cursorPosition: {r:r, c:c, x:x, y:y},
+      cursorPosition: {
+        row: row,
+        col: col,
+        x: this.computeLineWidth(this.state.lines[row].slice(0, col)),
+        y: this.props.inlineStyle.lineHeight * row
+      },
     });
+  },
+
+  moveCursor: function(direction) {
+    var row = this.state.cursorPosition.row;
+    var col = this.state.cursorPosition.col;
+    switch (direction) {
+      case Cursor.Direction.UP:
+        break;
+      case Cursor.Direction.DOWN:
+        break;
+      case Cursor.Direction.LEFT:
+        this.moveCursorTo(row, Math.max(0, col - 1));
+        break;
+      case Cursor.Direction.RIGHT:
+        this.moveCursorTo(row, Math.min(this.state.lines[row].length, col + 1));
+        break;
+    }
   },
 
   insert: function(key) {
     var pos = this.state.cursorPosition;
-    var line = this.state.lines[pos.r];
-    this.state.lines[pos.r] = line.slice(0, pos.c) + key + line.slice(pos.c);
-    pos.c += 1;
-    pos.x = this.computeLineWidth(this.state.lines[pos.r].slice(0, pos.c));
+    var line = this.state.lines[pos.row];
+    this.state.lines[pos.row] = line.slice(0, pos.col) + key + line.slice(pos.col);
     this.setState({
-      cursorPosition: pos,
       lines: this.state.lines
     });
+    this.moveCursor(Cursor.Direction.RIGHT);
   },
 
   computeLineWidth: function(line) {
@@ -42,9 +62,7 @@ export var CodeArea = React.createClass({
   },
 
   handleClick: function(event) {
-    var h = this.props.inlineStyle.lineHeight;
-    var n = this.state.lines.length;
-    this.moveCursor(n, 0, 0, h * (n - 1));
+    this.moveCursorTo(this.state.lines.length - 1, 0);
   },
 
   render: function() {
@@ -55,7 +73,7 @@ export var CodeArea = React.createClass({
             code={line}
             lineHeight={this.props.inlineStyle.lineHeight}
             computeLineWidth={this.computeLineWidth}
-            moveCursor={this.moveCursor} />
+            moveCursorTo={this.moveCursorTo} />
       );
     }.bind(this));
 
