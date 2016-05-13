@@ -1,0 +1,31 @@
+.reefy {
+  width: 100%;
+  height: 100%;
+  border: 1px solid lightgray;
+}
+
+.reefy .editor {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.reefy .code-area {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.reefy .cursor {
+  background-color: rgba(0,0,0,0);
+  position: absolute;
+  padding: 0;
+  border: none;
+  overflow: hidden;
+  resize: none;
+}
+
+.reefy .cursor:focus {
+  outline: none;
+}
