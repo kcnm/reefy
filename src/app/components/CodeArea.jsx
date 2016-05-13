@@ -52,6 +52,8 @@ export var CodeArea = React.createClass({
       lines: this.state.lines
     });
     this.moveCursor(Cursor.Direction.RIGHT);
+    this.area.scrollLeft =
+        this.state.cursorPosition.x + this.props.inlineStyle.fontSize * 10;
   },
 
   computeLineWidth: function(line) {
@@ -84,7 +86,8 @@ export var CodeArea = React.createClass({
     };
 
     return (
-      <div className="code-area" style={style}>
+      <div className="code-area" style={style}
+          ref={(ref) => this.area = ref }>
         <Cursor.Cursor
           inlineStyle={this.props.inlineStyle}
           position={this.state.cursorPosition}
