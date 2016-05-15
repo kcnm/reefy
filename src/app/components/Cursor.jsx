@@ -5,6 +5,8 @@ export var Key = {
   DOWN: 'ArrowDown',
   LEFT: 'ArrowLeft',
   RIGHT: 'ArrowRight',
+  HOME: 'Home',
+  END: 'End',
   ENTER: 'Enter',
   BACKSPACE: 'Backspace',
   DELETE: 'Delete'
@@ -22,6 +24,8 @@ export var Cursor = React.createClass({
       case Key.DOWN:
       case Key.LEFT:
       case Key.RIGHT:
+      case Key.HOME:
+      case Key.END:
         event.preventDefault();
         this.props.moveCursor(key);
         break;

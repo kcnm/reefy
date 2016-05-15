@@ -23,10 +23,10 @@ export var CodeArea = React.createClass({
     this.area.scrollLeft = x;
   },
 
-  moveCursor: function(direction) {
+  moveCursor: function(key) {
     var row = this.state.cursorPosition.row;
     var col = this.state.cursorPosition.col;
-    switch (direction) {
+    switch (key) {
       case Cursor.Key.UP:
         row = Math.max(0, row - 1);
         this.moveCursorTo(row, Math.min(this.state.lines[row].length, col));
@@ -40,6 +40,12 @@ export var CodeArea = React.createClass({
         break;
       case Cursor.Key.RIGHT:
         this.moveCursorTo(row, Math.min(this.state.lines[row].length, col + 1));
+        break;
+      case Cursor.Key.HOME:
+        this.moveCursorTo(row, 0);
+        break;
+      case Cursor.Key.END:
+        this.moveCursorTo(row, this.state.lines[row].length);
         break;
     }
   },
