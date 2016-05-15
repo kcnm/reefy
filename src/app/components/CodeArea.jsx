@@ -17,14 +17,10 @@ export var CodeArea = React.createClass({
   },
 
   moveCursorTo: function(row, col) {
-    this.setState({
-      cursorPosition: {
-        row: row,
-        col: col,
-        x: this.computeLineWidth(this.state.lines[row].slice(0, col)),
-        y: this.props.inlineStyle.lineHeight * row
-      },
-    });
+    var x = this.computeLineWidth(this.state.lines[row].slice(0, col));
+    var y = this.props.inlineStyle.lineHeight * row;
+    this.setState({cursorPosition: {row: row, col: col, x: x, y: y}});
+    this.area.scrollLeft = x;
   },
 
   moveCursor: function(direction) {
@@ -52,24 +48,49 @@ export var CodeArea = React.createClass({
     var pos = this.state.cursorPosition;
     var line = this.state.lines[pos.row];
     if (key == Cursor.Key.ENTER) {
-      console.log(this.state.lines);
       this.state.lines.splice(
           pos.row, 1, line.slice(0, pos.col), line.slice(pos.col));
-      console.log(this.state.lines);
-      this.setState({
-        lines: this.state.lines
-      });
+      this.setState({lines: this.state.lines});
       this.moveCursorTo(pos.row + 1, 0);
     } else {
       this.state.lines[pos.row] =
           line.slice(0, pos.col) + key + line.slice(pos.col);
-      this.setState({
-        lines: this.state.lines
-      });
+      this.setState({lines: this.state.lines});
       this.moveCursor(Cursor.Key.RIGHT);
-      this.area.scrollLeft =
-          this.state.cursorPosition.x + this.props.inlineStyle.fontSize * 10;
     }
+  },
+
+  remove: function(key) {
+    var pos = this.state.cursorPosition;
+    var line = this.state.lines[pos.row];
+    switch (key) {
+      case Cursor.Key.BACKSPACE:
+        if (pos.col == 0) {
+          if (pos.row > 0) {
+            this.moveCursorTo(
+                pos.row - 1, this.state.lines[pos.row - 1].length);
+            this.state.lines.splice(
+                pos.row - 1, 2, this.state.lines[pos.row - 1] + line);
+          }
+        } else {
+          this.state.lines[pos.row] =
+              line.slice(0, pos.col - 1) + line.slice(pos.col);
+          this.moveCursor(Cursor.Key.LEFT);
+        }
+        break;
+      case Cursor.Key.DELETE:
+        if (pos.col == line.length) {
+          if (pos.row < this.state.lines.length - 1) {
+            this.state.lines.splice(
+                pos.row, 2, line + this.state.lines[pos.row + 1]);
+          }
+        } else {
+          this.state.lines[pos.row] =
+              line.slice(0, pos.col) + line.slice(pos.col + 1);
+        }
+        break;
+    }
+    this.setState({lines: this.state.lines});
   },
 
   computeLineWidth: function(line) {
@@ -109,7 +130,8 @@ export var CodeArea = React.createClass({
           inlineStyle={this.props.inlineStyle}
           position={this.state.cursorPosition}
           moveCursor={this.moveCursor}
-          insert={this.insert} />
+          insert={this.insert}
+          remove={this.remove} />
         {codeLines}
       </div>
     );

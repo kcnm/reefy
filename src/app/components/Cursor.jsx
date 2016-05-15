@@ -5,7 +5,9 @@ export var Key = {
   DOWN: 'ArrowDown',
   LEFT: 'ArrowLeft',
   RIGHT: 'ArrowRight',
-  ENTER: 'Enter'
+  ENTER: 'Enter',
+  BACKSPACE: 'Backspace',
+  DELETE: 'Delete'
 };
 
 export var Cursor = React.createClass({
@@ -15,13 +17,17 @@ export var Cursor = React.createClass({
 
   handleKeyDown: function(event) {
     var key = event.key;
-    console.log(key);
     switch (key) {
       case Key.UP:
       case Key.DOWN:
       case Key.LEFT:
       case Key.RIGHT:
+        event.preventDefault();
         this.props.moveCursor(key);
+        break;
+      case Key.BACKSPACE:
+      case Key.DELETE:
+        this.props.remove(key);
         break;
     }
   },
