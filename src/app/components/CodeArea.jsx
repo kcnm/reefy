@@ -91,7 +91,8 @@ export var CodeArea = React.createClass({
 
     return (
       <div className="code-area" style={style}
-          ref={(ref) => this.area = ref }>
+          ref={(ref) => this.area = ref }
+          onClick={this.handleClick}>
         <Cursor.Cursor
           inlineStyle={this.props.inlineStyle}
           position={this.state.cursorPosition}
