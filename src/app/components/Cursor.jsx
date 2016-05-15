@@ -1,12 +1,28 @@
 var React = require('react');
 
+export var Direction = {
+  UP: 'ArrowUp',
+  DOWN: 'ArrowDown',
+  LEFT: 'ArrowLeft',
+  RIGHT: 'ArrowRight'
+};
+
 export var Cursor = React.createClass({
   componentDidUpdate: function() {
     this.textarea.focus();
   },
 
   handleKeyDown: function(event) {
-    console.log(event.key);
+    var key = event.key;
+    console.log(key);
+    switch (key) {
+      case Direction.UP:
+      case Direction.DOWN:
+      case Direction.LEFT:
+      case Direction.RIGHT:
+        this.props.moveCursor(key);
+        break;
+    }
   },
 
   handleKeyPress: function(event) {
@@ -38,10 +54,3 @@ export var Cursor = React.createClass({
     );
   }
 });
-
-export var Direction = {
-  UP: 'up',
-  DOWN: 'down',
-  LEFT: 'left',
-  RIGHT: 'right'
-};

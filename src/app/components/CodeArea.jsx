@@ -32,8 +32,12 @@ export var CodeArea = React.createClass({
     var col = this.state.cursorPosition.col;
     switch (direction) {
       case Cursor.Direction.UP:
+        row = Math.max(0, row - 1);
+        this.moveCursorTo(row, Math.min(this.state.lines[row].length, col));
         break;
       case Cursor.Direction.DOWN:
+        row = Math.min(this.state.lines.length - 1, row + 1);
+        this.moveCursorTo(row, Math.min(this.state.lines[row].length, col));
         break;
       case Cursor.Direction.LEFT:
         this.moveCursorTo(row, Math.max(0, col - 1));
@@ -91,6 +95,7 @@ export var CodeArea = React.createClass({
         <Cursor.Cursor
           inlineStyle={this.props.inlineStyle}
           position={this.state.cursorPosition}
+          moveCursor={this.moveCursor}
           insert={this.insert} />
         {codeLines}
       </div>
