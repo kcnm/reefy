@@ -23,9 +23,13 @@ export var CodeLine = React.createClass({
   },
 
   render: function() {
+    var style = {
+      height: this.props.lineHeight
+    };
+
     return (
       <div className="code-line" onClick={this.handleClick}>
-        <span>{this.props.code}</span>
+        <span style={style}>{this.props.code}</span>
       </div>
     );
   }

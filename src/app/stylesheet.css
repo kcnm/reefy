@@ -19,6 +19,7 @@
 }
 
 .reefy .code-line span {
+  display: block;
   white-space: pre;
 }
 

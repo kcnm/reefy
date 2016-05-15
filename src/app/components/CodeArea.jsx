@@ -31,18 +31,18 @@ export var CodeArea = React.createClass({
     var row = this.state.cursorPosition.row;
     var col = this.state.cursorPosition.col;
     switch (direction) {
-      case Cursor.Direction.UP:
+      case Cursor.Key.UP:
         row = Math.max(0, row - 1);
         this.moveCursorTo(row, Math.min(this.state.lines[row].length, col));
         break;
-      case Cursor.Direction.DOWN:
+      case Cursor.Key.DOWN:
         row = Math.min(this.state.lines.length - 1, row + 1);
         this.moveCursorTo(row, Math.min(this.state.lines[row].length, col));
         break;
-      case Cursor.Direction.LEFT:
+      case Cursor.Key.LEFT:
         this.moveCursorTo(row, Math.max(0, col - 1));
         break;
-      case Cursor.Direction.RIGHT:
+      case Cursor.Key.RIGHT:
         this.moveCursorTo(row, Math.min(this.state.lines[row].length, col + 1));
         break;
     }
@@ -51,13 +51,25 @@ export var CodeArea = React.createClass({
   insert: function(key) {
     var pos = this.state.cursorPosition;
     var line = this.state.lines[pos.row];
-    this.state.lines[pos.row] = line.slice(0, pos.col) + key + line.slice(pos.col);
-    this.setState({
-      lines: this.state.lines
-    });
-    this.moveCursor(Cursor.Direction.RIGHT);
-    this.area.scrollLeft =
-        this.state.cursorPosition.x + this.props.inlineStyle.fontSize * 10;
+    if (key == Cursor.Key.ENTER) {
+      console.log(this.state.lines);
+      this.state.lines.splice(
+          pos.row, 1, line.slice(0, pos.col), line.slice(pos.col));
+      console.log(this.state.lines);
+      this.setState({
+        lines: this.state.lines
+      });
+      this.moveCursorTo(pos.row + 1, 0);
+    } else {
+      this.state.lines[pos.row] =
+          line.slice(0, pos.col) + key + line.slice(pos.col);
+      this.setState({
+        lines: this.state.lines
+      });
+      this.moveCursor(Cursor.Key.RIGHT);
+      this.area.scrollLeft =
+          this.state.cursorPosition.x + this.props.inlineStyle.fontSize * 10;
+    }
   },
 
   computeLineWidth: function(line) {

@@ -1,10 +1,11 @@
 var React = require('react');
 
-export var Direction = {
+export var Key = {
   UP: 'ArrowUp',
   DOWN: 'ArrowDown',
   LEFT: 'ArrowLeft',
-  RIGHT: 'ArrowRight'
+  RIGHT: 'ArrowRight',
+  ENTER: 'Enter'
 };
 
 export var Cursor = React.createClass({
@@ -16,10 +17,10 @@ export var Cursor = React.createClass({
     var key = event.key;
     console.log(key);
     switch (key) {
-      case Direction.UP:
-      case Direction.DOWN:
-      case Direction.LEFT:
-      case Direction.RIGHT:
+      case Key.UP:
+      case Key.DOWN:
+      case Key.LEFT:
+      case Key.RIGHT:
         this.props.moveCursor(key);
         break;
     }
