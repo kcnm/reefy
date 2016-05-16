@@ -6,21 +6,37 @@ var Cursor = require('./Cursor.jsx');
 export var CodeArea = React.createClass({
   getInitialState: function() {
     return {
+      lines: this.props.code.split('\n'),
       cursorPosition: {
         row: 0,  // Row, starting from 0.
         col: 0,  // Column, starting from 0.
         x: 0,  // Pixels to the left.
         y: 0  // Pixels to top.
       },
-      lines: this.props.code.split('\n')
+      visualMode: {
+        active: false,
+        select: false,
+        beginPosition: {row: 0, col: 0}
+      }
     };
   },
 
   moveCursorTo: function(row, col) {
+    var pos = this.state.cursorPosition;
+    if (row == pos.row && col == pos.col) {
+      return;
+    }
+
     var x = this.computeLineWidth(this.state.lines[row].slice(0, col));
     var y = this.props.config.lineHeight * row;
     this.setState({cursorPosition: {row: row, col: col, x: x, y: y}});
     this.area.scrollLeft = x;
+
+    var vm = this.state.visualMode;
+    if (vm.active != vm.select) {
+      vm.select = vm.active;
+      this.setState({visualMode: vm});
+    }
   },
 
   moveCursor: function(key) {
@@ -47,6 +63,33 @@ export var CodeArea = React.createClass({
       case Cursor.Key.END:
         this.moveCursorTo(row, this.state.lines[row].length);
         break;
+    }
+  },
+
+  enterVisualMode: function() {
+    var pos = this.state.cursorPosition;
+    var vm = this.state.visualMode;
+    vm.active = true;
+    vm.beginPosition = {row: pos.row, col: pos.col};
+    this.setState({visualMode: vm});
+  },
+
+  exitVisualMode: function() {
+    this.state.visualMode.active = false;
+    this.setState({visualMode: this.state.visualMode});
+  },
+
+  getSelected: function() {
+    var vm = this.state.visualMode;
+    if (!vm.select) {
+      return null;
+    }
+    var bp = vm.beginPosition;
+    var ep = this.state.cursorPosition;
+    if (bp.row < ep.row || (bp.row == ep.row && bp.col < ep.col)) {
+      return {bRow: bp.row, bCol: bp.col, eRow: ep.row, eCol: ep.col};
+    } else {
+      return {bRow: ep.row, bCol: ep.col, eRow: bp.row, eCol: bp.col};
     }
   },
 
@@ -111,22 +154,42 @@ export var CodeArea = React.createClass({
   },
 
   render: function() {
-    var codeLines = this.state.lines.map(function(line, idx) {
-      return (
-        <CodeLine.CodeLine key={idx}
-            lineNum={idx}
-            code={line}
-            lineHeight={this.props.config.lineHeight}
-            computeLineWidth={this.computeLineWidth}
-            moveCursorTo={this.moveCursorTo} />
-      );
-    }.bind(this));
-
     var style = {
       fontSize: this.props.config.fontSize,
       fontFamily: this.props.config.fontFamily,
       lineHeight: this.props.config.lineHeight + 'px'
     };
+
+    var codeLines = this.state.lines.map(function(line, idx) {
+      // Compute line's intersection with selected.
+      var selected = this.getSelected();
+      if (selected) {
+        if (selected.bRow < idx) {
+          selected.bCol = 0;
+        } else if (selected.bRow > idx) {
+          selected.bCol = line.length;
+        }
+        selected.bRow = idx;
+        if (selected.eRow < idx) {
+          selected.eCol = 0;
+        } else if (selected.eRow > idx) {
+          selected.eCol = line.length;
+        }
+        selected.eRow = idx;
+        if (selected.bCol == selected.eCol) {
+          selected = null;
+        }
+      }
+      return (
+        <CodeLine.CodeLine key={idx}
+            lineNum={idx}
+            code={line}
+            selected={selected}
+            lineHeight={this.props.config.lineHeight}
+            computeLineWidth={this.computeLineWidth}
+            moveCursorTo={this.moveCursorTo} />
+      );
+    }.bind(this));
 
     return (
       <div className="code-area" style={style}
@@ -136,6 +199,8 @@ export var CodeArea = React.createClass({
           config={this.props.config}
           position={this.state.cursorPosition}
           moveCursor={this.moveCursor}
+          enterVisualMode={this.enterVisualMode}
+          exitVisualMode={this.exitVisualMode}
           insert={this.insert}
           remove={this.remove} />
         {codeLines}

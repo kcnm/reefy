@@ -19,8 +19,11 @@
 }
 
 .reefy .code-line span {
-  display: block;
   white-space: pre;
+}
+
+.reefy .code-line span.highlight {
+  background-color: skyblue;
 }
 
 .reefy .cursor {

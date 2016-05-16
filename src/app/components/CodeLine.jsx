@@ -24,12 +24,30 @@ export var CodeLine = React.createClass({
 
   render: function() {
     var style = {
+      display: this.props.code ? 'inline' : 'block',
       height: this.props.lineHeight
     };
 
+    var content = <span style={style}>{this.props.code}</span>;
+
+    var selected = this.props.selected;
+    if (selected) {
+      content = [
+        <span key="pre" style={style}>
+          {this.props.code.slice(0, selected.bCol)}
+        </span>,
+        <span key="sel" className="highlight" style={style}>
+          {this.props.code.slice(selected.bCol, selected.eCol)}
+        </span>,
+        <span key="suf" style={style}>
+          {this.props.code.slice(selected.eCol)}
+        </span>
+      ];
+    }
+
     return (
       <div className="code-line" onClick={this.handleClick}>
-        <span style={style}>{this.props.code}</span>
+        {content}
       </div>
     );
   }

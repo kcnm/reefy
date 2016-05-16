@@ -9,7 +9,8 @@ export var Key = {
   END: 'End',
   ENTER: 'Enter',
   BACKSPACE: 'Backspace',
-  DELETE: 'Delete'
+  DELETE: 'Delete',
+  SHIFT: 'Shift'
 };
 
 export var Cursor = React.createClass({
@@ -33,6 +34,9 @@ export var Cursor = React.createClass({
       case Key.DELETE:
         this.props.remove(key);
         break;
+      case Key.SHIFT:
+        this.props.enterVisualMode();
+        break;
     }
   },
 
@@ -42,6 +46,9 @@ export var Cursor = React.createClass({
   },
 
   handleKeyUp: function(event) {
+    if (event.key == Key.SHIFT) {
+      this.props.exitVisualMode();
+    }
   },
 
   render: function() {
