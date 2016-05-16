@@ -15,7 +15,7 @@ export var CodeArea = React.createClass({
       },
       visualMode: {
         active: false,
-        select: false,
+        selected: false,
         beginPosition: {row: 0, col: 0}
       }
     };
@@ -33,8 +33,8 @@ export var CodeArea = React.createClass({
     this.area.scrollLeft = x;
 
     var vm = this.state.visualMode;
-    if (vm.active != vm.select) {
-      vm.select = vm.active;
+    if (vm.active != vm.selected) {
+      vm.selected = vm.active;
       this.setState({visualMode: vm});
     }
   },
@@ -81,7 +81,7 @@ export var CodeArea = React.createClass({
 
   getSelected: function() {
     var vm = this.state.visualMode;
-    if (!vm.select) {
+    if (!vm.selected) {
       return null;
     }
     var bp = vm.beginPosition;
@@ -94,6 +94,10 @@ export var CodeArea = React.createClass({
   },
 
   insert: function(key) {
+    if (this.state.visualMode.selected) {
+      this.removeSelected();
+    }
+
     var pos = this.state.cursorPosition;
     var line = this.state.lines[pos.row];
     if (key == Cursor.Key.ENTER) {
@@ -110,6 +114,10 @@ export var CodeArea = React.createClass({
   },
 
   remove: function(key) {
+    if (this.state.visualMode.selected) {
+      this.removeSelected();
+      return;
+    }
     var pos = this.state.cursorPosition;
     var line = this.state.lines[pos.row];
     switch (key) {
@@ -140,6 +148,23 @@ export var CodeArea = React.createClass({
         break;
     }
     this.setState({lines: this.state.lines});
+  },
+
+  removeSelected: function() {
+    var selected = this.getSelected();
+    if (selected) {
+      this.state.lines.splice(
+          selected.bRow,
+          selected.eRow - selected.bRow + 1,
+          this.state.lines[selected.bRow].slice(0, selected.bCol) +
+              this.state.lines[selected.eRow].slice(selected.eCol));
+    }
+    this.state.visualMode.selected = false;
+    this.setState({
+      lines: this.state.lines,
+      visualMode: this.state.visualMode
+    });
+    this.moveCursorTo(selected.bRow, selected.bCol);
   },
 
   computeLineWidth: function(line) {
