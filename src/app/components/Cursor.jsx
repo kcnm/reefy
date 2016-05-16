@@ -48,11 +48,11 @@ export var Cursor = React.createClass({
     var style = {
       left: this.props.position.x,
       top: this.props.position.y,
-      width: this.props.inlineStyle.fontSize * 0.5,
-      height: this.props.inlineStyle.lineHeight,
-      fontSize: this.props.inlineStyle.fontSize,
-      fontFamily: this.props.inlineStyle.fontFamily,
-      lineHeight: this.props.inlineStyle.lineHeight + 'px'
+      width: this.props.config.fontSize * 0.5,
+      height: this.props.config.lineHeight,
+      fontSize: this.props.config.fontSize,
+      fontFamily: this.props.config.fontFamily,
+      lineHeight: this.props.config.lineHeight + 'px'
     };
 
     return (

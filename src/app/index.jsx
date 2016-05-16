@@ -7,7 +7,7 @@ var Reefy = require('./components/Reefy.jsx');
 require('./stylesheet.css');
 
 // Default input.
-var inlineStyle = {
+var config = {
   fontSize: 12,
   fontFamily: 'monospace',
   lineHeight: 14
@@ -16,5 +16,5 @@ var file = 'hello\nworld\n';
 
 // Renders reefy editor.
 ReactDOM.render(
-    <Reefy.Reefy inlineStyle={inlineStyle} file={file}/>,
+    <Reefy.Reefy config={config} file={file}/>,
     document.getElementById('reefy'));

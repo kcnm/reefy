@@ -7,7 +7,7 @@ export var Editor = React.createClass({
     return (
       <div className="editor">
         <CodeArea.CodeArea
-            inlineStyle={this.props.inlineStyle}
+            config={this.props.config}
             code={this.props.file} />
       </div>
     );

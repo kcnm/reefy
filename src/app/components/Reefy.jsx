@@ -7,7 +7,7 @@ export var Reefy = React.createClass({
     return (
       <div className="reefy">
         <Editor.Editor
-            inlineStyle={this.props.inlineStyle}
+            config={this.props.config}
             file={this.props.file} />
       </div>
     );

@@ -18,7 +18,7 @@ export var CodeArea = React.createClass({
 
   moveCursorTo: function(row, col) {
     var x = this.computeLineWidth(this.state.lines[row].slice(0, col));
-    var y = this.props.inlineStyle.lineHeight * row;
+    var y = this.props.config.lineHeight * row;
     this.setState({cursorPosition: {row: row, col: col, x: x, y: y}});
     this.area.scrollLeft = x;
   },
@@ -100,9 +100,9 @@ export var CodeArea = React.createClass({
   },
 
   computeLineWidth: function(line) {
-    var style = this.props.inlineStyle;
+    var cfg = this.props.config;
     var ctx = document.createElement('canvas').getContext('2d');
-    ctx.font = style.fontSize + 'px ' + style.fontFamily;
+    ctx.font = cfg.fontSize + 'px ' + cfg.fontFamily;
     return ctx.measureText(line).width;
   },
 
@@ -116,16 +116,16 @@ export var CodeArea = React.createClass({
         <CodeLine.CodeLine key={idx}
             lineNum={idx}
             code={line}
-            lineHeight={this.props.inlineStyle.lineHeight}
+            lineHeight={this.props.config.lineHeight}
             computeLineWidth={this.computeLineWidth}
             moveCursorTo={this.moveCursorTo} />
       );
     }.bind(this));
 
     var style = {
-      fontSize: this.props.inlineStyle.fontSize,
-      fontFamily: this.props.inlineStyle.fontFamily,
-      lineHeight: this.props.inlineStyle.lineHeight + 'px'
+      fontSize: this.props.config.fontSize,
+      fontFamily: this.props.config.fontFamily,
+      lineHeight: this.props.config.lineHeight + 'px'
     };
 
     return (
@@ -133,7 +133,7 @@ export var CodeArea = React.createClass({
           ref={(ref) => this.area = ref }
           onClick={this.handleClick}>
         <Cursor.Cursor
-          inlineStyle={this.props.inlineStyle}
+          config={this.props.config}
           position={this.state.cursorPosition}
           moveCursor={this.moveCursor}
           insert={this.insert}
