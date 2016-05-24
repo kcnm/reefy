@@ -79,6 +79,19 @@ export var CodeArea = React.createClass({
     this.setState({visualMode: this.state.visualMode});
   },
 
+  selectAll: function() {
+    this.setState({
+      visualMode: {
+        active: false,
+        selected: true,
+        beginPosition: {row: 0, col: 0}
+      }
+    });
+    this.moveCursorTo(
+        this.state.lines.length - 1,
+        this.state.lines[this.state.lines.length - 1].length);
+  },
+
   getSelected: function() {
     var vm = this.state.visualMode;
     if (!vm.selected) {
@@ -226,6 +239,7 @@ export var CodeArea = React.createClass({
           moveCursor={this.moveCursor}
           enterVisualMode={this.enterVisualMode}
           exitVisualMode={this.exitVisualMode}
+          selectAll={this.selectAll}
           insert={this.insert}
           remove={this.remove} />
         {codeLines}

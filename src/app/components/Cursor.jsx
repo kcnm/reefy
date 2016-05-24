@@ -19,6 +19,14 @@ export var Cursor = React.createClass({
   },
 
   handleKeyDown: function(event) {
+    if (event.ctrlKey) {
+      switch (event.keyCode) {
+        case 65:  // ctrl+a
+          this.props.selectAll();
+          break;
+      }
+      return;
+    }
     var key = event.key;
     switch (key) {
       case Key.UP:
