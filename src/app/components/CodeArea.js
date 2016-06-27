@@ -6,6 +6,7 @@ var FileStore = require('../stores/FileStore');
 
 var ClickOnCodeAreaAction = require('../actions/ClickOnCodeAreaAction');
 var ClickOnCodeLineAction = require('../actions/ClickOnCodeLineAction');
+var KeyOnCursorAction = require('../actions/KeyOnCursorAction');
 
 var CodeLine = require('./CodeLine');
 var Cursor = require('./Cursor');
@@ -35,8 +36,20 @@ var CodeArea = React.createClass({
         this._setCursorPosition);
   },
 
+  handleKeyOnCursor: function(event, type) {
+    KeyOnCursorAction.create(event, type).then(
+        this._setLinesAndCursorPosition);
+  },
+
   _setCursorPosition: function() {
     this.setState({
+      cursorPosition: CursorStore.getPosition()
+    });
+  },
+
+  _setLinesAndCursorPosition: function() {
+    this.setState({
+      lines: FileStore.getLines(),
       cursorPosition: CursorStore.getPosition()
     });
   },
@@ -61,12 +74,17 @@ var CodeArea = React.createClass({
       );
     });
 
+    var cursorHandlers = {
+      handleKey: this.handleKeyOnCursor
+    };
+
     return (
       <div className="code-area" style={style}
           onClick={this.handleClick}>
         <Cursor
             config={this.state.config}
-            position={this.state.cursorPosition} />
+            position={this.state.cursorPosition}
+            handlers={cursorHandlers} />
         {codeLines}
       </div>
     );
