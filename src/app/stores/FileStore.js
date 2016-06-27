@@ -9,7 +9,7 @@ var FileStore = {
     return _lines;
   },
 
-  getCursorPxPosition: function(row, col) {
+  getCursorPositionPx: function(row, col) {
     var eof = row >= _lines.length;
     row = Math.min(_lines.length, row);
     col = Math.min(eof ? 0 : _lines[row].length, col);

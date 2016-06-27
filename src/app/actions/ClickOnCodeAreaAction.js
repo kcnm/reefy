@@ -6,7 +6,7 @@ var ClickOnCodeAreaAction = {
 
   create: function(x, y) {
     var row = FileStore.getLines().length;
-    CursorStore.moveTo(row, 0);
+    return CursorStore.moveTo(row, 0);
   }
 
 };
