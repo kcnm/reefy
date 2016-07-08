@@ -58,11 +58,32 @@ var KeyOnCursorAction = {
   },
 
   createKeyPress(event) {
-    return Promise.reject('Unimplemented cursor key press event: ' + event);
+    var key = event.key;
+    var pos = CursorStore.getPosition();
+    if (key == Key.ENTER) {
+      return FileStore.insertEnter(pos.row, pos.col).then(function() {
+        return CursorStore.moveTo(pos.row + 1, 0);
+      });
+    } else {
+      return FileStore.insert(pos.row, pos.col, key).then(function() {
+        return CursorStore.move(0, 1);
+      });
+    }
   },
 
   createKeyUp(event) {
-    return Promise.reject('Unimplemented cursor key up event: ' + event);
+    var key = event.key;
+    switch (key) {
+      case Key.UP:
+      case Key.DOWN:
+      case Key.LEFT:
+      case Key.RIGHT:
+      case Key.HOME:
+      case Key.END:
+        return Promise.resolve(key);
+      default:
+        return Promise.reject('Unimplemented cursor key up event: ' + event);
+    }
   }
 
 };

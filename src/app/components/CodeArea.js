@@ -68,6 +68,7 @@ var CodeArea = React.createClass({
     var codeLines = this.state.lines.map(function(line, idx) {
       return (
         <CodeLine key={idx}
+            config={cfg}
             lineNum={idx}
             code={line}
             handlers={codeLineHandlers} />
@@ -82,7 +83,7 @@ var CodeArea = React.createClass({
       <div className="code-area" style={style}
           onClick={this.handleClick}>
         <Cursor
-            config={this.state.config}
+            config={cfg}
             position={this.state.cursorPosition}
             handlers={cursorHandlers} />
         {codeLines}

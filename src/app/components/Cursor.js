@@ -16,6 +16,7 @@ var Cursor = React.createClass({
   },
 
   handleKeyPress: function(event) {
+    event.preventDefault();
     this.props.handlers.handleKey(event, KeyOnCursorAction.KEY_PRESS);
   },
 

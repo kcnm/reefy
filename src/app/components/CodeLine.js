@@ -8,10 +8,18 @@ var CodeLine = React.createClass({
   },
 
   render: function() {
+    var style = {};
+    if (!this.props.code) {
+      style = {
+        display: 'block',
+        height: this.props.config.lineHeight
+      };
+    }
+
     return (
       <div className="code-line"
           onClick={this.handleClick}>
-        <span>
+        <span style={style}>
           {this.props.code}
         </span>
       </div>
