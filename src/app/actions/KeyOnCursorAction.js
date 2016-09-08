@@ -52,6 +52,14 @@ var KeyOnCursorAction = {
         var pos = CursorStore.getPosition();
         var line = FileStore.getLines()[pos.row];
         return CursorStore.moveTo(pos.row, line ? line.length : 0);
+      case Key.BACKSPACE:
+        var pos = CursorStore.getPosition();
+        return CursorStore.move(0, -1).then(function() {
+          return FileStore.remove(pos.row, pos.col);
+        });
+      case Key.DELETE:
+        var pos = CursorStore.getPosition();
+        return FileStore.remove(pos.row, pos.col);
       default:
         return Promise.reject('Unimplemented cursor key down event: ' + event);
     }
