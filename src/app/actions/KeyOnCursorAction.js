@@ -60,6 +60,8 @@ var KeyOnCursorAction = {
       case Key.DELETE:
         var pos = CursorStore.getPosition();
         return FileStore.remove(pos.row, pos.col);
+      case Key.SHIFT:
+        return CursorStore.enterVisual();
       default:
         return Promise.reject('Unimplemented cursor key down event: ' + event);
     }
@@ -88,7 +90,11 @@ var KeyOnCursorAction = {
       case Key.RIGHT:
       case Key.HOME:
       case Key.END:
+      case Key.BACKSPACE:
+      case Key.DELETE:
         return Promise.resolve(key);
+      case Key.SHIFT:
+        return CursorStore.exitVisual();
       default:
         return Promise.reject('Unimplemented cursor key up event: ' + event);
     }

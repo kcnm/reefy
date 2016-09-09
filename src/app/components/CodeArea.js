@@ -18,7 +18,8 @@ var CodeArea = React.createClass({
     return {
       config: ConfigStore.getConfig(),
       lines: FileStore.getLines(),
-      cursorPosition: CursorStore.getPosition()
+      cursorPosition: CursorStore.getPosition(),
+      cursorSelection: CursorStore.getSelection()
     };
   },
 
@@ -43,14 +44,16 @@ var CodeArea = React.createClass({
 
   _setCursorPosition: function() {
     this.setState({
-      cursorPosition: CursorStore.getPosition()
+      cursorPosition: CursorStore.getPosition(),
+      cursorSelection: CursorStore.getSelection()
     });
   },
 
   _setLinesAndCursorPosition: function() {
     this.setState({
       lines: FileStore.getLines(),
-      cursorPosition: CursorStore.getPosition()
+      cursorPosition: CursorStore.getPosition(),
+      cursorSelection: CursorStore.getSelection()
     });
   },
 
@@ -71,9 +74,10 @@ var CodeArea = React.createClass({
             config={cfg}
             lineNum={idx}
             code={line}
+            selection={this.state.cursorSelection}
             handlers={codeLineHandlers} />
       );
-    });
+    }, this);
 
     var cursorHandlers = {
       handleKey: this.handleKeyOnCursor

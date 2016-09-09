@@ -7,6 +7,15 @@ var _pos = {
   col: 0
 };
 
+var _vis = {
+  active: false,
+  select: false,
+  begin: {
+    row: 0,
+    col: 0
+  }
+};
+
 var CursorStore = {
 
   getPosition: function() {
@@ -24,9 +33,23 @@ var CursorStore = {
     };
   },
 
+  getSelection: function() {
+    if (!_vis.select) {
+      return null;
+    }
+    var begin = _vis.begin;
+    var end = _pos;
+    if (begin.row < end.row || (begin.row == end.row && begin.col < end.col)) {
+      return {begin: begin, end: end};
+    } else {
+      return {begin: end, end: begin};
+    }
+  },
+
   moveTo: function(row, col) {
     _pos.row = row;
     _pos.col = col;
+    _vis.select = _vis.active;
     return Promise.resolve(_pos);
   },
 
@@ -54,6 +77,20 @@ var CursorStore = {
     row = Math.min(row, lines.length - 1);
     var col = Math.min(_pos.col, lines[row].length);
     return this.moveTo(row, col);
+  },
+
+  enterVisual: function() {
+    _vis.active = true;
+    _vis.begin = {
+      row: _pos.row,
+      col: _pos.col
+    };
+    return Promise.resolve(_vis.active);
+  },
+
+  exitVisual: function() {
+    _vis.active = false;
+    return Promise.resolve(_vis.active);
   }
 };
 
