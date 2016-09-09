@@ -38,13 +38,13 @@ var KeyOnCursorAction = {
     var key = event.key;
     switch (key) {
       case Key.UP:
-        return CursorStore.move(-1, 0);
+        return CursorStore.moveVert(-1);
       case Key.DOWN:
-        return CursorStore.move(1, 0);
+        return CursorStore.moveVert(1);
       case Key.LEFT:
-        return CursorStore.move(0, -1);
+        return CursorStore.moveHorz(-1);
       case Key.RIGHT:
-        return CursorStore.move(0, 1);
+        return CursorStore.moveHorz(1);
       case Key.HOME:
         var pos = CursorStore.getPosition();
         return CursorStore.moveTo(pos.row, 0);
@@ -54,7 +54,7 @@ var KeyOnCursorAction = {
         return CursorStore.moveTo(pos.row, line ? line.length : 0);
       case Key.BACKSPACE:
         var pos = CursorStore.getPosition();
-        return CursorStore.move(0, -1).then(function() {
+        return CursorStore.moveHorz(-1).then(function() {
           return FileStore.remove(pos.row, pos.col);
         });
       case Key.DELETE:
@@ -74,7 +74,7 @@ var KeyOnCursorAction = {
       });
     } else {
       return FileStore.insert(pos.row, pos.col, key).then(function() {
-        return CursorStore.move(0, 1);
+        return CursorStore.moveHorz(1);
       });
     }
   },
