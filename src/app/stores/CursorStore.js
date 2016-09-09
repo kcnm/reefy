@@ -91,7 +91,13 @@ var CursorStore = {
   exitVisual: function() {
     _vis.active = false;
     return Promise.resolve(_vis.active);
+  },
+
+  clearSelection: function() {
+    _vis.select = false;
+    return Promise.resolve(_vis);
   }
+
 };
 
 module.exports = CursorStore;

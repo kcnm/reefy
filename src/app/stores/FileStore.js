@@ -29,6 +29,18 @@ var FileStore = {
       _lines[row] = line.slice(0, col) + line.slice(col + 1);
     }
     return Promise.resolve(_lines);
+  },
+
+  removeSelection: function(sel) {
+    if (sel) {
+      var beginLine = _lines[sel.begin.row];
+      var endLine = _lines[sel.end.row];
+      _lines.splice(
+          sel.begin.row,
+          sel.end.row - sel.begin.row + 1,
+          beginLine.slice(0, sel.begin.col) + endLine.slice(sel.end.col));
+    }
+    return Promise.resolve(_lines);
   }
 
 };

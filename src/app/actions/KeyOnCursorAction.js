@@ -53,11 +53,17 @@ var KeyOnCursorAction = {
         var line = FileStore.getLines()[pos.row];
         return CursorStore.moveTo(pos.row, line ? line.length : 0);
       case Key.BACKSPACE:
+        if (this._maybeRemoveSelection()) {
+          return Promise.resolve();
+        }
         var pos = CursorStore.getPosition();
         return CursorStore.moveHorz(-1).then(function() {
           return FileStore.remove(pos.row, pos.col);
         });
       case Key.DELETE:
+        if (this._maybeRemoveSelection()) {
+          return Promise.resolve();
+        }
         var pos = CursorStore.getPosition();
         return FileStore.remove(pos.row, pos.col);
       case Key.SHIFT:
@@ -69,6 +75,7 @@ var KeyOnCursorAction = {
 
   createKeyPress(event) {
     var key = event.key;
+    this._maybeRemoveSelection();
     var pos = CursorStore.getPosition();
     if (key == Key.ENTER) {
       return FileStore.insertEnter(pos.row, pos.col).then(function() {
@@ -98,6 +105,17 @@ var KeyOnCursorAction = {
       default:
         return Promise.reject('Unimplemented cursor key up event: ' + event);
     }
+  },
+
+  _maybeRemoveSelection: function() {
+    var sel = CursorStore.getSelection();
+    if (sel) {
+      FileStore.removeSelection(sel);
+      CursorStore.clearSelection();
+      CursorStore.moveTo(sel.begin.row, sel.begin.col);
+      return true;
+    }
+    return false;
   }
 
 };
