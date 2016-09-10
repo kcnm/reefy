@@ -1,7 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var ReefyX = require('./components/Reefy.jsx');
 var Reefy = require('./components/Reefy');
 
 // Import CSS module.
@@ -17,8 +16,5 @@ var file = 'hello\nworld\n';
 
 // Renders reefy editor.
 ReactDOM.render(
-    <div>
-      <ReefyX.Reefy config={config} file={file}/>
-      <Reefy />
-    </div>,
+    <Reefy />,
     document.getElementById('reefy'));
