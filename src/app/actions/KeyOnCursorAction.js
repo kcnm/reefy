@@ -101,6 +101,8 @@ var KeyOnCursorAction = {
       FileStore.insert(pos.row, pos.col, key);
       CursorStore.moveHorz(1);
     }
+    // Removes possible selection for upper characters.
+    CursorStore.clearSelection();
   },
 
   createKeyUp(event) {
