@@ -38,6 +38,14 @@ var KeyOnCursorAction = {
   },
 
   createKeyDown(event) {
+    if (event.ctrlKey) {
+      switch (event.keyCode) {
+        case 65:  // ctrl+a
+          CursorStore.selectAll();
+          break;
+      }
+      return;
+    }
     var key = event.key;
     switch (key) {
       case Key.UP:

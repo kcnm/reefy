@@ -52,6 +52,12 @@ var CursorStore = {
     _vis.select = _vis.active;
   },
 
+  moveToLast: function() {
+    var lines = FileStore.getLines();
+    var row = lines.length - 1;
+    this.moveTo(row, lines[row].length);
+  },
+
   moveHorz: function(colDiff) {
     var lines = FileStore.getLines();
     var row = _pos.row;
@@ -87,6 +93,16 @@ var CursorStore = {
   },
 
   exitVisual: function() {
+    _vis.active = false;
+  },
+
+  selectAll: function() {
+    _vis.begin = {
+      row: 0,
+      col: 0
+    };
+    _vis.active = true;
+    this.moveToLast();
     _vis.active = false;
   },
 
