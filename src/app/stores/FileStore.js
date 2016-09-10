@@ -10,13 +10,11 @@ var FileStore = {
   insert: function(row, col, key) {
     var line = _lines[row];
     _lines[row] = line.slice(0, col) + key + line.slice(col);
-    return Promise.resolve(_lines);
   },
 
   insertEnter: function(row, col) {
     var line = _lines[row];
     _lines.splice(row, 1, line.slice(0, col), line.slice(col));
-    return Promise.resolve(_lines);
   },
 
   remove: function(row, col) {
@@ -28,7 +26,6 @@ var FileStore = {
     } else {
       _lines[row] = line.slice(0, col) + line.slice(col + 1);
     }
-    return Promise.resolve(_lines);
   },
 
   removeSelection: function(sel) {
@@ -40,7 +37,6 @@ var FileStore = {
           sel.end.row - sel.begin.row + 1,
           beginLine.slice(0, sel.begin.col) + endLine.slice(sel.end.col));
     }
-    return Promise.resolve(_lines);
   }
 
 };

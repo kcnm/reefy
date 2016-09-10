@@ -22,7 +22,7 @@ var ClickOnCodeLineAction = {
         }
       }
     }
-    return CursorStore.moveTo(row, col);
+    CursorStore.moveTo(row, col);
   }
 
 };

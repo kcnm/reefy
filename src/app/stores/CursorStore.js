@@ -50,7 +50,6 @@ var CursorStore = {
     _pos.row = row;
     _pos.col = col;
     _vis.select = _vis.active;
-    return Promise.resolve(_pos);
   },
 
   moveHorz: function(colDiff) {
@@ -67,7 +66,7 @@ var CursorStore = {
       col -= lines[row++].length + 1;
     }
     col = Math.min(col, lines[row].length || 0);
-    return this.moveTo(row, col);
+    this.moveTo(row, col);
   },
 
   moveVert: function(rowDiff) {
@@ -76,7 +75,7 @@ var CursorStore = {
     row = Math.max(row, 0);
     row = Math.min(row, lines.length - 1);
     var col = Math.min(_pos.col, lines[row].length);
-    return this.moveTo(row, col);
+    this.moveTo(row, col);
   },
 
   enterVisual: function() {
@@ -85,17 +84,14 @@ var CursorStore = {
       row: _pos.row,
       col: _pos.col
     };
-    return Promise.resolve(_vis.active);
   },
 
   exitVisual: function() {
     _vis.active = false;
-    return Promise.resolve(_vis.active);
   },
 
   clearSelection: function() {
     _vis.select = false;
-    return Promise.resolve(_vis);
   }
 
 };

@@ -26,20 +26,20 @@ var CodeArea = React.createClass({
   handleClick: function(event) {
     event.stopPropagation();
     var e = event.nativeEvent;
-    ClickOnCodeAreaAction.create(e.offsetX, e.offsetY).then(
-        this._setCursorPosition);
+    ClickOnCodeAreaAction.create(e.offsetX, e.offsetY);
+    this._setCursorPosition();
   },
 
   handleClickOnCodeLine: function(event, lineNum) {
     event.stopPropagation();
     var e = event.nativeEvent;
-    ClickOnCodeLineAction.create(e.offsetX, lineNum).then(
-        this._setCursorPosition);
+    ClickOnCodeLineAction.create(e.offsetX, lineNum);
+    this._setCursorPosition();
   },
 
   handleKeyOnCursor: function(event, type) {
-    KeyOnCursorAction.create(event, type).then(
-        this._setLinesAndCursorPosition);
+    KeyOnCursorAction.create(event, type);
+    this._setLinesAndCursorPosition();
   },
 
   _setCursorPosition: function() {

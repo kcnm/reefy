@@ -24,13 +24,16 @@ var KeyOnCursorAction = {
   create: function(event, type) {
     switch (type) {
       case this.KEY_DOWN:
-        return this.createKeyDown(event);
+        this.createKeyDown(event);
+        break;
       case this.KEY_PRESS:
-        return this.createKeyPress(event);
+        this.createKeyPress(event);
+        break;
       case this.KEY_UP:
-        return this.createKeyUp(event);
+        this.createKeyUp(event);
+        break;
       default:
-        return Promise.reject('Unrecognized key event type: ' + type);
+        console.error('Unrecognized key event type', type);
     }
   },
 
@@ -38,38 +41,44 @@ var KeyOnCursorAction = {
     var key = event.key;
     switch (key) {
       case Key.UP:
-        return CursorStore.moveVert(-1);
+        CursorStore.moveVert(-1);
+        break;
       case Key.DOWN:
-        return CursorStore.moveVert(1);
+        CursorStore.moveVert(1);
+        break;
       case Key.LEFT:
-        return CursorStore.moveHorz(-1);
+        CursorStore.moveHorz(-1);
+        break;
       case Key.RIGHT:
-        return CursorStore.moveHorz(1);
+        CursorStore.moveHorz(1);
+        break;
       case Key.HOME:
         var pos = CursorStore.getPosition();
-        return CursorStore.moveTo(pos.row, 0);
+        CursorStore.moveTo(pos.row, 0);
+        break;
       case Key.END:
         var pos = CursorStore.getPosition();
         var line = FileStore.getLines()[pos.row];
-        return CursorStore.moveTo(pos.row, line ? line.length : 0);
+        CursorStore.moveTo(pos.row, line ? line.length : 0);
+        break;
       case Key.BACKSPACE:
-        if (this._maybeRemoveSelection()) {
-          return Promise.resolve();
+        if (!this._maybeRemoveSelection()) {
+          var pos = CursorStore.getPosition();
+          CursorStore.moveHorz(-1);
+          FileStore.remove(pos.row, pos.col);
         }
-        var pos = CursorStore.getPosition();
-        return CursorStore.moveHorz(-1).then(function() {
-          return FileStore.remove(pos.row, pos.col);
-        });
+        break;
       case Key.DELETE:
-        if (this._maybeRemoveSelection()) {
-          return Promise.resolve();
+        if (!this._maybeRemoveSelection()) {
+          var pos = CursorStore.getPosition();
+          FileStore.remove(pos.row, pos.col);
         }
-        var pos = CursorStore.getPosition();
-        return FileStore.remove(pos.row, pos.col);
+        break;
       case Key.SHIFT:
-        return CursorStore.enterVisual();
+        CursorStore.enterVisual();
+        break;
       default:
-        return Promise.reject('Unimplemented cursor key down event: ' + event);
+        console.error('Unimplemented cursor key down event', event);
     }
   },
 
@@ -78,13 +87,11 @@ var KeyOnCursorAction = {
     this._maybeRemoveSelection();
     var pos = CursorStore.getPosition();
     if (key == Key.ENTER) {
-      return FileStore.insertEnter(pos.row, pos.col).then(function() {
-        return CursorStore.moveTo(pos.row + 1, 0);
-      });
+      FileStore.insertEnter(pos.row, pos.col);
+      CursorStore.moveTo(pos.row + 1, 0);
     } else {
-      return FileStore.insert(pos.row, pos.col, key).then(function() {
-        return CursorStore.moveHorz(1);
-      });
+      FileStore.insert(pos.row, pos.col, key);
+      CursorStore.moveHorz(1);
     }
   },
 
@@ -99,11 +106,12 @@ var KeyOnCursorAction = {
       case Key.END:
       case Key.BACKSPACE:
       case Key.DELETE:
-        return Promise.resolve(key);
+        break;
       case Key.SHIFT:
-        return CursorStore.exitVisual();
+        CursorStore.exitVisual();
+        break;
       default:
-        return Promise.reject('Unimplemented cursor key up event: ' + event);
+        console.error('Unimplemented cursor key up event', event);
     }
   },
 
