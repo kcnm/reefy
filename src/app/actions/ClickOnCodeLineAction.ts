@@ -1,11 +1,11 @@
-var ConfigStore = require('../stores/ConfigStore');
-var CursorStore = require('../stores/CursorStore');
-var FileStore = require('../stores/FileStore');
+import { ConfigStore } from '../stores/ConfigStore';
+import { CursorStore } from '../stores/CursorStore';
+import { FileStore } from '../stores/FileStore';
 
 
-var ClickOnCodeLineAction = {
+export var ClickOnCodeLineAction = {
 
-  create: function(x, row) {
+  create: function(x: number, row: number) {
     var line = FileStore.getLines()[row];
     var col = 0;
     var width = ConfigStore.getLineWidth(line);
@@ -26,5 +26,3 @@ var ClickOnCodeLineAction = {
   }
 
 };
-
-module.exports = ClickOnCodeLineAction;

@@ -1,8 +1,11 @@
-var CursorStore = require('../stores/CursorStore');
-var FileStore = require('../stores/FileStore');
+import * as React from 'react';
+
+import { KeyEventType } from '../types';
+import { CursorStore } from '../stores/CursorStore';
+import { FileStore } from '../stores/FileStore';
 
 
-var Key = {
+export var Key = {
   UP: 'ArrowUp',
   DOWN: 'ArrowDown',
   LEFT: 'ArrowLeft',
@@ -15,21 +18,17 @@ var Key = {
   SHIFT: 'Shift'
 };
 
-var KeyOnCursorAction = {
+export var KeyOnCursorAction = {
 
-  KEY_DOWN: 'Key Down',
-  KEY_PRESS: 'Key Press',
-  KEY_UP: 'Key Up',
-
-  create: function(event, type) {
+  create: function(event: React.KeyboardEvent, type: KeyEventType) {
     switch (type) {
-      case this.KEY_DOWN:
+      case KeyEventType.KeyDown:
         this.createKeyDown(event);
         break;
-      case this.KEY_PRESS:
+      case KeyEventType.KeyPress:
         this.createKeyPress(event);
         break;
-      case this.KEY_UP:
+      case KeyEventType.KeyUp:
         this.createKeyUp(event);
         break;
       default:
@@ -37,7 +36,7 @@ var KeyOnCursorAction = {
     }
   },
 
-  createKeyDown(event) {
+  createKeyDown(event: React.KeyboardEvent) {
     if (event.ctrlKey) {
       switch (event.keyCode) {
         case 65:  // ctrl+a
@@ -90,7 +89,7 @@ var KeyOnCursorAction = {
     }
   },
 
-  createKeyPress(event) {
+  createKeyPress(event: React.KeyboardEvent) {
     var key = event.key;
     this._maybeRemoveSelection();
     var pos = CursorStore.getPosition();
@@ -105,7 +104,7 @@ var KeyOnCursorAction = {
     CursorStore.clearSelection();
   },
 
-  createKeyUp(event) {
+  createKeyUp(event: React.KeyboardEvent) {
     var key = event.key;
     switch (key) {
       case Key.UP:
@@ -137,5 +136,3 @@ var KeyOnCursorAction = {
   }
 
 };
-
-module.exports = KeyOnCursorAction;

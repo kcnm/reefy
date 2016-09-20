@@ -1,5 +1,5 @@
-var ConfigStore = require('./ConfigStore');
-var FileStore = require('./FileStore');
+import { ConfigStore } from './ConfigStore';
+import { FileStore } from './FileStore';
 
 
 var _pos = {
@@ -16,13 +16,13 @@ var _vis = {
   }
 };
 
-var CursorStore = {
+export var CursorStore = {
 
   getPosition: function() {
     return _pos;
   },
 
-  getCursorPositionPx: function(row, col) {
+  getCursorPositionPx: function(row: number, col: number) {
     var lines = FileStore.getLines();
     var eof = row >= lines.length;
     row = Math.min(lines.length, row);
@@ -46,7 +46,7 @@ var CursorStore = {
     }
   },
 
-  moveTo: function(row, col) {
+  moveTo: function(row: number, col: number) {
     _pos.row = row;
     _pos.col = col;
     _vis.select = _vis.active;
@@ -58,7 +58,7 @@ var CursorStore = {
     this.moveTo(row, lines[row].length);
   },
 
-  moveHorz: function(colDiff) {
+  moveHorz: function(colDiff: number) {
     var lines = FileStore.getLines();
     var row = _pos.row;
     var col = _pos.col + colDiff;
@@ -75,7 +75,7 @@ var CursorStore = {
     this.moveTo(row, col);
   },
 
-  moveVert: function(rowDiff) {
+  moveVert: function(rowDiff: number) {
     var lines = FileStore.getLines();
     var row = _pos.row + rowDiff;
     row = Math.max(row, 0);
@@ -111,5 +111,3 @@ var CursorStore = {
   }
 
 };
-
-module.exports = CursorStore;

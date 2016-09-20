@@ -5,18 +5,16 @@ var _config = {
   lineHeight: 14,
 };
 
-var ConfigStore = {
+export var ConfigStore = {
 
   getConfig: function() {
     return _config;
   },
 
-  getLineWidth: function(line) {
+  getLineWidth: function(line: string) {
     var ctx = document.createElement('canvas').getContext('2d');
     ctx.font = _config.fontSize + 'px ' + _config.fontFamily;
     return ctx.measureText(line).width;
   }
 
 };
-
-module.exports = ConfigStore;

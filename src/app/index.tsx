@@ -1,7 +1,7 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-var Reefy = require('./components/Reefy');
+import { Reefy } from './components/Reefy';
 
 // Import CSS module.
 require('./stylesheet.css');
