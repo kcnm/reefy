@@ -2,7 +2,10 @@ language: node_js
 node_js:
   - 0.12
 
-before install:
+before_install:
+  - npm install -g typings
+
+install:
   - npm install
   - typings install --global --save dt~react
   - typings install --global --save dt~react-dom
