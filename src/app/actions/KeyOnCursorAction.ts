@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import { KeyEventType } from '../types';
-import { CursorStore } from '../stores/CursorStore';
-import { FileStore } from '../stores/FileStore';
+import KeyEvent from '../types/KeyEvent';
+import CursorStore from '../stores/CursorStore';
+import FileStore from '../stores/FileStore';
 
 
-export var Key = {
+let Key = {
   UP: 'ArrowUp',
   DOWN: 'ArrowDown',
   LEFT: 'ArrowLeft',
@@ -15,20 +15,20 @@ export var Key = {
   ENTER: 'Enter',
   BACKSPACE: 'Backspace',
   DELETE: 'Delete',
-  SHIFT: 'Shift'
+  SHIFT: 'Shift',
 };
 
-export var KeyOnCursorAction = {
+let KeyOnCursorAction = {
 
-  create: function(event: React.KeyboardEvent, type: KeyEventType) {
+  create: function(event: React.KeyboardEvent, type: KeyEvent) {
     switch (type) {
-      case KeyEventType.KeyDown:
+      case KeyEvent.Down:
         this.createKeyDown(event);
         break;
-      case KeyEventType.KeyPress:
+      case KeyEvent.Press:
         this.createKeyPress(event);
         break;
-      case KeyEventType.KeyUp:
+      case KeyEvent.Up:
         this.createKeyUp(event);
         break;
       default:
@@ -45,7 +45,8 @@ export var KeyOnCursorAction = {
       }
       return;
     }
-    var key = event.key;
+    let key = event.key;
+    let pos = CursorStore.getPosition();
     switch (key) {
       case Key.UP:
         CursorStore.moveVert(-1);
@@ -60,24 +61,22 @@ export var KeyOnCursorAction = {
         CursorStore.moveHorz(1);
         break;
       case Key.HOME:
-        var pos = CursorStore.getPosition();
         CursorStore.moveTo(pos.row, 0);
         break;
       case Key.END:
-        var pos = CursorStore.getPosition();
-        var line = FileStore.getLines()[pos.row];
+        let line = FileStore.getLines()[pos.row];
         CursorStore.moveTo(pos.row, line ? line.length : 0);
         break;
       case Key.BACKSPACE:
         if (!this._maybeRemoveSelection()) {
-          var pos = CursorStore.getPosition();
+          pos = CursorStore.getPosition();
           CursorStore.moveHorz(-1);
           FileStore.remove(pos.row, pos.col);
         }
         break;
       case Key.DELETE:
         if (!this._maybeRemoveSelection()) {
-          var pos = CursorStore.getPosition();
+          pos = CursorStore.getPosition();
           FileStore.remove(pos.row, pos.col);
         }
         break;
@@ -90,9 +89,9 @@ export var KeyOnCursorAction = {
   },
 
   createKeyPress(event: React.KeyboardEvent) {
-    var key = event.key;
+    let key = event.key;
     this._maybeRemoveSelection();
-    var pos = CursorStore.getPosition();
+    let pos = CursorStore.getPosition();
     if (key == Key.ENTER) {
       FileStore.insertEnter(pos.row, pos.col);
       CursorStore.moveTo(pos.row + 1, 0);
@@ -105,7 +104,7 @@ export var KeyOnCursorAction = {
   },
 
   createKeyUp(event: React.KeyboardEvent) {
-    var key = event.key;
+    let key = event.key;
     switch (key) {
       case Key.UP:
       case Key.DOWN:
@@ -125,7 +124,7 @@ export var KeyOnCursorAction = {
   },
 
   _maybeRemoveSelection: function() {
-    var sel = CursorStore.getSelection();
+    let sel = CursorStore.getSelection();
     if (sel) {
       FileStore.removeSelection(sel);
       CursorStore.clearSelection();
@@ -133,6 +132,8 @@ export var KeyOnCursorAction = {
       return true;
     }
     return false;
-  }
+  },
 
 };
+
+export default KeyOnCursorAction;

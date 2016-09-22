@@ -1,14 +1,17 @@
 import * as React from 'react';
 
-import { Config, CursorPosition, CursorSelection } from '../types';
-import { CursorStore } from '../stores/CursorStore';
+import Config from '../types/Config';
+import CursorPosition from '../types/CursorPosition';
+import CursorSelection from '../types/CursorSelection';
+
+import CursorStore from '../stores/CursorStore';
 
 
-export interface CodeLineHandlers {
+interface CodeLineHandlers {
   handleClickOnLine(ev: React.MouseEvent, lineNum: number): void;
 }
 
-export interface CodeLineProps {
+interface CodeLineProps {
   config: Config;
   lineNum: number;
   code: string;
@@ -16,7 +19,7 @@ export interface CodeLineProps {
   handlers: CodeLineHandlers;
 }
 
-export class CodeLine extends React.Component<CodeLineProps, {}> {
+export default class CodeLine extends React.Component<CodeLineProps, {}> {
 
   constructor(props: CodeLineProps) {
     super(props);
@@ -26,7 +29,7 @@ export class CodeLine extends React.Component<CodeLineProps, {}> {
   render() {
     let style = this.props.code ? {} : {
       display: 'block',
-      height: this.props.config.lineHeight
+      height: this.props.config.lineHeight,
     };
 
     let content = [

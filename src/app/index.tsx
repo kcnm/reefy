@@ -1,18 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { Reefy } from './components/Reefy';
+import Reefy from './components/Reefy';
 
 // Import CSS module.
-require('./stylesheet.css');
+import './stylesheet.css';
 
 // Default input.
-var config = {
+let config = {
   fontSize: 12,
   fontFamily: 'monospace',
   lineHeight: 14
 };
-var file = 'hello\nworld\n';
 
 // Renders reefy editor.
 ReactDOM.render(

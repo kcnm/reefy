@@ -1,35 +1,35 @@
-import { ConfigStore } from './ConfigStore';
-import { FileStore } from './FileStore';
+import ConfigStore from './ConfigStore';
+import FileStore from './FileStore';
 
 
-var _pos = {
+let _pos = {
   row: 0,
-  col: 0
+  col: 0,
 };
 
-var _vis = {
+let _vis = {
   active: false,
   select: false,
   begin: {
     row: 0,
-    col: 0
-  }
+    col: 0,
+  },
 };
 
-export var CursorStore = {
+let CursorStore = {
 
   getPosition: function() {
     return _pos;
   },
 
-  getCursorPositionPx: function(row: number, col: number) {
-    var lines = FileStore.getLines();
-    var eof = row >= lines.length;
+  getPositionPx: function(row: number, col: number) {
+    let lines = FileStore.getLines();
+    let eof = row >= lines.length;
     row = Math.min(lines.length, row);
     col = Math.min(eof ? 0 : lines[row].length, col);
     return {
       x: eof ? 0 : ConfigStore.getLineWidth(lines[row].slice(0, col)),
-      y: ConfigStore.getConfig().lineHeight * row
+      y: ConfigStore.getConfig().lineHeight * row,
     };
   },
 
@@ -37,8 +37,8 @@ export var CursorStore = {
     if (!_vis.select) {
       return null;
     }
-    var begin = _vis.begin;
-    var end = _pos;
+    let begin = _vis.begin;
+    let end = _pos;
     if (begin.row < end.row || (begin.row == end.row && begin.col < end.col)) {
       return {begin: begin, end: end};
     } else {
@@ -53,15 +53,15 @@ export var CursorStore = {
   },
 
   moveToLast: function() {
-    var lines = FileStore.getLines();
-    var row = lines.length - 1;
+    let lines = FileStore.getLines();
+    let row = lines.length - 1;
     this.moveTo(row, lines[row].length);
   },
 
   moveHorz: function(colDiff: number) {
-    var lines = FileStore.getLines();
-    var row = _pos.row;
-    var col = _pos.col + colDiff;
+    let lines = FileStore.getLines();
+    let row = _pos.row;
+    let col = _pos.col + colDiff;
     // Moves to lines above if necessary.
     while (row >= 0 && col < 0) {
       col += lines[--row].length + 1;
@@ -76,11 +76,11 @@ export var CursorStore = {
   },
 
   moveVert: function(rowDiff: number) {
-    var lines = FileStore.getLines();
-    var row = _pos.row + rowDiff;
+    let lines = FileStore.getLines();
+    let row = _pos.row + rowDiff;
     row = Math.max(row, 0);
     row = Math.min(row, lines.length - 1);
-    var col = Math.min(_pos.col, lines[row].length);
+    let col = Math.min(_pos.col, lines[row].length);
     this.moveTo(row, col);
   },
 
@@ -88,7 +88,7 @@ export var CursorStore = {
     _vis.active = true;
     _vis.begin = {
       row: _pos.row,
-      col: _pos.col
+      col: _pos.col,
     };
   },
 
@@ -99,7 +99,7 @@ export var CursorStore = {
   selectAll: function() {
     _vis.begin = {
       row: 0,
-      col: 0
+      col: 0,
     };
     _vis.active = true;
     this.moveToLast();
@@ -108,6 +108,8 @@ export var CursorStore = {
 
   clearSelection: function() {
     _vis.select = false;
-  }
+  },
 
 };
+
+export default CursorStore;

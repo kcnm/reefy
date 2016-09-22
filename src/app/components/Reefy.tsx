@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { Editor } from './Editor';
+import Editor from './Editor';
 
 
-export class Reefy extends React.Component<{}, {}> {
+export default class Reefy extends React.Component<{}, {}> {
 
   render() {
     return (

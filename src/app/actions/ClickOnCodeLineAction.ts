@@ -1,21 +1,21 @@
-import { ConfigStore } from '../stores/ConfigStore';
-import { CursorStore } from '../stores/CursorStore';
-import { FileStore } from '../stores/FileStore';
+import ConfigStore from '../stores/ConfigStore';
+import CursorStore from '../stores/CursorStore';
+import FileStore from '../stores/FileStore';
 
 
-export var ClickOnCodeLineAction = {
+let ClickOnCodeLineAction = {
 
   create: function(x: number, row: number) {
-    var line = FileStore.getLines()[row];
-    var col = 0;
-    var width = ConfigStore.getLineWidth(line);
+    let line = FileStore.getLines()[row];
+    let col = 0;
+    let width = ConfigStore.getLineWidth(line);
     if (x > width) {
       col = line.length;
     } else {
-      var minDist = x;
-      for (var i = 1; i < line.length; ++i) {
-        var p = ConfigStore.getLineWidth(line.substring(0, i));
-        var d = Math.abs(x - p);
+      let minDist = x;
+      for (let i = 1; i < line.length; ++i) {
+        let p = ConfigStore.getLineWidth(line.substring(0, i));
+        let d = Math.abs(x - p);
         if (d < minDist) {
           minDist = d;
           col = i;
@@ -23,6 +23,8 @@ export var ClickOnCodeLineAction = {
       }
     }
     CursorStore.moveTo(row, col);
-  }
+  },
 
 };
+
+export default ClickOnCodeLineAction;

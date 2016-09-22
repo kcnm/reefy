@@ -1,26 +1,26 @@
-import { CursorSelection } from '../types';
+import CursorSelection from '../types/CursorSelection';
 
 
-var _lines = ['hello', 'world'];
+let _lines = ['hello', 'world'];
 
-export var FileStore = {
+let FileStore = {
 
   getLines: function() {
     return _lines;
   },
 
   insert: function(row: number, col: number, key: string) {
-    var line = _lines[row];
+    let line = _lines[row];
     _lines[row] = line.slice(0, col) + key + line.slice(col);
   },
 
   insertEnter: function(row: number, col: number) {
-    var line = _lines[row];
+    let line = _lines[row];
     _lines.splice(row, 1, line.slice(0, col), line.slice(col));
   },
 
   remove: function(row: number, col: number) {
-    var line = _lines[row];
+    let line = _lines[row];
     if (col < 0) {
       _lines.splice(row - 1, 2, (_lines[row - 1] || '') + line);
     } else if (col >= line.length) {
@@ -32,13 +32,15 @@ export var FileStore = {
 
   removeSelection: function(sel: CursorSelection) {
     if (sel) {
-      var beginLine = _lines[sel.begin.row];
-      var endLine = _lines[sel.end.row];
+      let beginLine = _lines[sel.begin.row];
+      let endLine = _lines[sel.end.row];
       _lines.splice(
           sel.begin.row,
           sel.end.row - sel.begin.row + 1,
           beginLine.slice(0, sel.begin.col) + endLine.slice(sel.end.col));
     }
-  }
+  },
 
 };
+
+export default FileStore;

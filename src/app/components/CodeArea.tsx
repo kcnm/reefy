@@ -1,18 +1,20 @@
 import * as React from 'react';
 
-import { KeyEventType } from '../types';
-import { ConfigStore } from '../stores/ConfigStore';
-import { CursorStore } from '../stores/CursorStore';
-import { FileStore } from '../stores/FileStore';
-import { ClickOnCodeAreaAction } from '../actions/ClickOnCodeAreaAction';
-import { ClickOnCodeLineAction } from '../actions/ClickOnCodeLineAction';
-import { KeyOnCursorAction } from '../actions/KeyOnCursorAction';
+import KeyEvent from '../types/KeyEvent';
 
-import { CodeLine } from './CodeLine';
-import { Cursor } from './Cursor';
+import ConfigStore from '../stores/ConfigStore';
+import CursorStore from '../stores/CursorStore';
+import FileStore from '../stores/FileStore';
+
+import ClickOnCodeAreaAction from '../actions/ClickOnCodeAreaAction';
+import ClickOnCodeLineAction from '../actions/ClickOnCodeLineAction';
+import KeyOnCursorAction from '../actions/KeyOnCursorAction';
+
+import CodeLine from './CodeLine';
+import Cursor from './Cursor';
 
 
-export class CodeArea extends React.Component<{}, any> {
+export default class CodeArea extends React.Component<{}, any> {
 
   constructor(props: {}) {
     super(props);
@@ -20,7 +22,7 @@ export class CodeArea extends React.Component<{}, any> {
       config: ConfigStore.getConfig(),
       lines: FileStore.getLines(),
       cursorPosition: CursorStore.getPosition(),
-      cursorSelection: CursorStore.getSelection()
+      cursorSelection: CursorStore.getSelection(),
     };
     this._handleClick = this._handleClick.bind(this);
     this._handleClickOnCodeLine = this._handleClickOnCodeLine.bind(this);
@@ -28,17 +30,17 @@ export class CodeArea extends React.Component<{}, any> {
   }
 
   render() {
-    var cfg = this.state.config;
-    var style = {
+    let cfg = this.state.config;
+    let style = {
       fontSize: cfg.fontSize,
       fontFamily: cfg.fontFamily,
-      lineHeight: cfg.lineHeight + 'px'
+      lineHeight: cfg.lineHeight + 'px',
     };
 
-    var codeLineHandlers = {
+    let codeLineHandlers = {
       handleClickOnLine: this._handleClickOnCodeLine
     };
-    var codeLines = this.state.lines.map(function(line: string, idx: number) {
+    let codeLines = this.state.lines.map((line: string, idx: number) => {
       return (
         <CodeLine key={idx}
             config={cfg}
@@ -47,9 +49,9 @@ export class CodeArea extends React.Component<{}, any> {
             selection={this.state.cursorSelection}
             handlers={codeLineHandlers} />
       );
-    }, this);
+    });
 
-    var cursorHandlers = {
+    let cursorHandlers = {
       handleKeyEvent: this._handleKeyOnCursor
     };
 
@@ -78,7 +80,7 @@ export class CodeArea extends React.Component<{}, any> {
     this._setCursorPosition();
   }
 
-  private _handleKeyOnCursor(ev: React.KeyboardEvent, type: KeyEventType) {
+  private _handleKeyOnCursor(ev: React.KeyboardEvent, type: KeyEvent) {
     KeyOnCursorAction.create(ev, type);
     this._setLinesAndCursorPosition();
   }
@@ -86,7 +88,7 @@ export class CodeArea extends React.Component<{}, any> {
   private _setCursorPosition() {
     this.setState({
       cursorPosition: CursorStore.getPosition(),
-      cursorSelection: CursorStore.getSelection()
+      cursorSelection: CursorStore.getSelection(),
     });
   }
 
@@ -94,7 +96,7 @@ export class CodeArea extends React.Component<{}, any> {
     this.setState({
       lines: FileStore.getLines(),
       cursorPosition: CursorStore.getPosition(),
-      cursorSelection: CursorStore.getSelection()
+      cursorSelection: CursorStore.getSelection(),
     });
   }
 
