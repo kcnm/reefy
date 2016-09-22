@@ -4,6 +4,8 @@ node_js:
 
 before install:
   - npm install
+  - typings install --global --save dt~react
+  - typings install --global --save dt~react-dom
 
 script:
   - npm run build
