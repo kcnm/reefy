@@ -6,9 +6,9 @@ import ConfigStore from '../stores/ConfigStore';
 import CursorStore from '../stores/CursorStore';
 import FileStore from '../stores/FileStore';
 
-import ClickOnCodeAreaAction from '../actions/ClickOnCodeAreaAction';
-import ClickOnCodeLineAction from '../actions/ClickOnCodeLineAction';
-import KeyOnCursorAction from '../actions/KeyOnCursorAction';
+import clickOnCodeArea from '../actions/ClickOnCodeAreaAction';
+import clickOnCodeLine from '../actions/ClickOnCodeLineAction';
+import keyOnCursor from '../actions/KeyOnCursorAction';
 
 import CodeLine from './CodeLine';
 import Cursor from './Cursor';
@@ -69,19 +69,19 @@ export default class CodeArea extends React.Component<{}, any> {
 
   private _handleClick(ev: React.MouseEvent) {
     ev.stopPropagation();
-    ClickOnCodeAreaAction.create();
+    clickOnCodeArea();
     this._setCursorPosition();
   }
 
   private _handleClickOnCodeLine(ev: React.MouseEvent, lineNum: number) {
     ev.stopPropagation();
     let nativeEvent: any = ev.nativeEvent;  // Workaround for typescript check.
-    ClickOnCodeLineAction.create(nativeEvent, lineNum);
+    clickOnCodeLine(nativeEvent, lineNum);
     this._setCursorPosition();
   }
 
   private _handleKeyOnCursor(ev: React.KeyboardEvent, type: KeyEvent) {
-    KeyOnCursorAction.create(ev, type);
+    keyOnCursor(ev, type);
     this._setLinesAndCursorPosition();
   }
 
