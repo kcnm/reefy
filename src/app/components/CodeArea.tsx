@@ -1,5 +1,8 @@
 import * as React from 'react';
 
+import Config from '../types/Config';
+import CursorPosition from '../types/CursorPosition';
+import CursorSelection from '../types/CursorSelection';
 import KeyEvent from '../types/KeyEvent';
 
 import ConfigStore from '../stores/ConfigStore';
@@ -14,19 +17,33 @@ import CodeLine from './CodeLine';
 import Cursor from './Cursor';
 
 
-export default class CodeArea extends React.Component<{}, any> {
+interface CodeAreaState {
+  config?: Config;
+  lines?: string[];
+
+  cursorFlash?: boolean;
+  cursorPosition?: CursorPosition;
+  cursorSelection?: CursorSelection;
+}
+
+export default class CodeArea extends React.Component<{}, CodeAreaState> {
+
+  cursorFlashTimeoutId: number;
 
   constructor(props: {}) {
     super(props);
     this.state = {
       config: ConfigStore.getConfig(),
       lines: FileStore.getLines(),
+      cursorFlash: true,
       cursorPosition: CursorStore.getPosition(),
       cursorSelection: CursorStore.getSelection(),
     };
     this._handleClick = this._handleClick.bind(this);
     this._handleClickOnCodeLine = this._handleClickOnCodeLine.bind(this);
     this._handleKeyOnCursor = this._handleKeyOnCursor.bind(this);
+
+    this.cursorFlashTimeoutId = undefined;
   }
 
   render() {
@@ -55,16 +72,56 @@ export default class CodeArea extends React.Component<{}, any> {
       handleKeyEvent: this._handleKeyOnCursor
     };
 
+    this._setCursorFlashTimeout();
+
     return (
       <div className="code-area" style={style}
           onClick={this._handleClick}>
         <Cursor
             config={cfg}
+            flash={this.state.cursorFlash}
             position={this.state.cursorPosition}
             handlers={cursorHandlers} />
         {codeLines}
       </div>
     );
+  }
+
+  private _setCursorFlashTimeout() {
+    if (!this.cursorFlashTimeoutId) {
+      this.cursorFlashTimeoutId = setTimeout(() => {
+        this.cursorFlashTimeoutId = undefined;
+        this.setState({
+          cursorFlash: !this.state.cursorFlash,
+        });
+      }, 1000);
+    }
+  }
+
+  private _clearCursorFlashTimeout(flash = true) {
+    if (this.cursorFlashTimeoutId) {
+      clearTimeout(this.cursorFlashTimeoutId);
+      this.cursorFlashTimeoutId = undefined;
+    }
+  }
+
+  private _setCursorPosition() {
+    this._clearCursorFlashTimeout();
+    this.setState({
+      cursorFlash: true,
+      cursorPosition: CursorStore.getPosition(),
+      cursorSelection: CursorStore.getSelection(),
+    });
+  }
+
+  private _setLinesAndCursorPosition() {
+    this._clearCursorFlashTimeout();
+    this.setState({
+      lines: FileStore.getLines(),
+      cursorFlash: true,
+      cursorPosition: CursorStore.getPosition(),
+      cursorSelection: CursorStore.getSelection(),
+    });
   }
 
   private _handleClick(ev: React.MouseEvent) {
@@ -76,28 +133,13 @@ export default class CodeArea extends React.Component<{}, any> {
   private _handleClickOnCodeLine(ev: React.MouseEvent, lineNum: number) {
     ev.stopPropagation();
     let nativeEvent: any = ev.nativeEvent;  // Workaround for typescript check.
-    clickOnCodeLine(nativeEvent, lineNum);
+    clickOnCodeLine(nativeEvent.offsetX, lineNum);
     this._setCursorPosition();
   }
 
   private _handleKeyOnCursor(ev: React.KeyboardEvent, type: KeyEvent) {
     keyOnCursor(ev, type);
     this._setLinesAndCursorPosition();
-  }
-
-  private _setCursorPosition() {
-    this.setState({
-      cursorPosition: CursorStore.getPosition(),
-      cursorSelection: CursorStore.getSelection(),
-    });
-  }
-
-  private _setLinesAndCursorPosition() {
-    this.setState({
-      lines: FileStore.getLines(),
-      cursorPosition: CursorStore.getPosition(),
-      cursorSelection: CursorStore.getSelection(),
-    });
   }
 
 }

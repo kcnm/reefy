@@ -27,14 +27,22 @@
 }
 
 .reefy .cursor {
-  background-color: rgba(0,0,0,0);
   position: absolute;
-  padding: 0;
-  border: none;
-  overflow: hidden;
-  resize: none;
+  background-color: rgba(0,0,0,0);
 }
 
-.reefy .cursor:focus {
+.reefy .cursor.flash {
+  position: absolute;
+  background-color: rgba(0,0,0,0.8);
+}
+
+.reefy .cursor textarea {
+  width: 1px;
+  color: rgba(0,0,0,0);
+  background-color: rgba(0,0,0,0);
+  padding: 0;
+  border: none;
   outline: none;
+  overflow: hidden;
+  resize: none;
 }

@@ -13,6 +13,7 @@ interface CursorHandlers {
 
 interface CursorProps {
   config: Config;
+  flash: boolean;
   position: CursorPosition;
   handlers: CursorHandlers;
 }
@@ -30,10 +31,12 @@ export default class Cursor extends React.Component<CursorProps, {}> {
     let cfg = this.props.config;
     let pos = this.props.position;
     let posPx = CursorStore.getPositionPx(pos.row, pos.col);
-    let style = {
+    let cursorClassName = "cursor " + (this.props.flash ? "flash" : "");
+    let cursorStyle = {
       left: posPx.x,
       top: posPx.y,
-      width: cfg.fontSize * 0.5,
+    };
+    let textareaStyle = {
       height: cfg.lineHeight,
       fontSize: cfg.fontSize,
       fontFamily: cfg.fontFamily,
@@ -41,12 +44,14 @@ export default class Cursor extends React.Component<CursorProps, {}> {
     };
 
     return (
-      <textarea className="cursor" style={style}
-          ref={(ref) => this._textarea = ref }
-          onKeyDown={this._handleKeyDown}
-          onKeyPress={this._handleKeyPress}
-          onKeyUp={this._handleKeyUp}>
-      </textarea>
+      <div className={cursorClassName} style={cursorStyle}>
+        <textarea style={textareaStyle}
+            ref={(ref) => this._textarea = ref }
+            onKeyDown={this._handleKeyDown}
+            onKeyPress={this._handleKeyPress}
+            onKeyUp={this._handleKeyUp}>
+        </textarea>
+      </div>
     );
   }
 
