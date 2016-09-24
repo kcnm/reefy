@@ -23,8 +23,8 @@
     "react": "^15.0.2",
     "react-dom": "^15.0.2",
     "style-loader": "^0.13.1",
-    "typescript": "^1.8.10",
-    "webpack": "^1.13.0"
+    "webpack": "^1.13.0",
+    "webpack-fail-plugin": "^1.0.5"
   },
   "devDependencies": {
     "source-map-loader": "^0.1.5",

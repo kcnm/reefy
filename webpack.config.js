@@ -37,6 +37,9 @@ var config = {
     "react": "React",
     "react-dom": "ReactDOM"
   },
+  plugins: [
+    require('webpack-fail-plugin'),
+  ],
 };
 
 module.exports = config;
