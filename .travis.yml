@@ -3,7 +3,7 @@ node_js:
   - 0.12
 
 before_install:
-  - npm install -g typescript typings
+  - npm install -g typings
 
 install:
   - npm install
