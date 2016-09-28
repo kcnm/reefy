@@ -63,12 +63,12 @@ let CursorStore = {
     let row = _pos.row;
     let col = _pos.col + colDiff;
     // Moves to lines above if necessary.
-    while (row >= 0 && col < 0) {
-      col += lines[--row].length + 1;
+    while (row > 0 && col < 0) {
+      col += lines[row--].length + 1;
     }
     col = Math.max(col, 0);
     // Move to lines below if necessary.
-    while (row < lines.length && col > lines[row].length) {
+    while (row < lines.length - 1 && col > lines[row].length) {
       col -= lines[row++].length + 1;
     }
     col = Math.min(col, lines[row].length || 0);
