@@ -29,12 +29,11 @@ export default class Cursor extends React.Component<CursorProps, {}> {
 
   render() {
     let cfg = this.props.config;
-    let pos = this.props.position;
-    let posPx = CursorStore.getPositionPx(pos.row, pos.col);
+    let pos = CursorStore.getPxPosition();
     let cursorClassName = "cursor " + (this.props.flash ? "flash" : "");
     let cursorStyle = {
-      left: posPx.x,
-      top: posPx.y,
+      left: pos.x,
+      top: pos.y,
     };
     let textareaStyle = {
       height: cfg.lineHeight,

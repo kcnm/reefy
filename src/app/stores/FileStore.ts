@@ -1,3 +1,5 @@
+import ConfigStore from './ConfigStore';
+
 import CursorSelection from '../types/CursorSelection';
 
 
@@ -7,6 +9,37 @@ let FileStore = {
 
   getLines: function() {
     return _lines;
+  },
+
+  getXYPositionByRC: function(row: number, col: number) {
+    let eof = row >= _lines.length;
+    row = Math.min(_lines.length, row);
+    col = Math.min(eof ? 0 : _lines[row].length, col);
+    return {
+      x: eof ? 0 : ConfigStore.getLineWidth(_lines[row].slice(0, col)),
+      y: ConfigStore.getConfig().lineHeight * row,
+    };
+  },
+
+  getRCPositionByXY: function(x: number, y: number) {
+    let row = Math.floor(y / ConfigStore.getConfig().lineHeight);
+    let col = 0;
+    let line = _lines[row] || '';
+    let width = ConfigStore.getLineWidth(line);
+    if (x > width) {
+      col = line.length;
+    } else {
+      let minDist = x;
+      for (let i = 1; i < line.length; ++i) {
+        let p = ConfigStore.getLineWidth(line.substring(0, i));
+        let d = Math.abs(x - p);
+        if (d < minDist) {
+          minDist = d;
+          col = i;
+        }
+      }
+    }
+    return {row: row, col: col};
   },
 
   insert: function(row: number, col: number, key: string) {

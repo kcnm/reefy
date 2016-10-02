@@ -1,4 +1,3 @@
-import ConfigStore from './ConfigStore';
 import FileStore from './FileStore';
 
 
@@ -22,15 +21,8 @@ let CursorStore = {
     return _pos;
   },
 
-  getPositionPx: function(row: number, col: number) {
-    let lines = FileStore.getLines();
-    let eof = row >= lines.length;
-    row = Math.min(lines.length, row);
-    col = Math.min(eof ? 0 : lines[row].length, col);
-    return {
-      x: eof ? 0 : ConfigStore.getLineWidth(lines[row].slice(0, col)),
-      y: ConfigStore.getConfig().lineHeight * row,
-    };
+  getPxPosition: function() {
+    return FileStore.getXYPositionByRC(_pos.row, _pos.col);
   },
 
   getSelection: function() {
@@ -82,6 +74,10 @@ let CursorStore = {
     row = Math.min(row, lines.length - 1);
     let col = Math.min(_pos.col, lines[row].length);
     this.moveTo(row, col);
+  },
+
+  isInVisual: function() {
+    return _vis.active;
   },
 
   enterVisual: function() {

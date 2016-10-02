@@ -10,7 +10,6 @@ import CursorStore from '../stores/CursorStore';
 import FileStore from '../stores/FileStore';
 
 import keyOnCursor from '../actions/KeyOnCursorAction';
-import mouseDownOnCodeArea from '../actions/MouseDownOnCodeAreaAction';
 
 import CodeLine from './CodeLine';
 import Cursor from './Cursor';
@@ -40,6 +39,8 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     };
     this._handleKeyOnCursor = this._handleKeyOnCursor.bind(this);
     this._handleMouseDown = this._handleMouseDown.bind(this);
+    this._handleMouseMove = this._handleMouseMove.bind(this);
+    this._handleMouseUp = this._handleMouseUp.bind(this);
 
     this.cursorFlashTimeoutId = undefined;
   }
@@ -71,7 +72,9 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     return (
       <div className="code-area" style={style}
           ref={(ref) => this._ref = ref }
-          onMouseDown={this._handleMouseDown}>
+          onMouseDown={this._handleMouseDown}
+          onMouseMove={this._handleMouseMove}
+          onMouseUp={this._handleMouseUp}>
         <Cursor
             config={cfg}
             flash={this.state.cursorFlash}
@@ -121,10 +124,33 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     });
   }
 
-  private _handleMouseDown(ev: React.MouseEvent) {
-    ev.stopPropagation();
+  private _getMouseEventCursorPosition(ev: React.MouseEvent) {
     let rect = this._ref.getClientRects()[0];
-    mouseDownOnCodeArea(ev.clientX - rect.left, ev.clientY - rect.top);
+    let x = ev.clientX - rect.left;
+    let y = ev.clientY - rect.top;
+    return FileStore.getRCPositionByXY(x, y);
+  }
+
+  private _handleMouseDown(ev: React.MouseEvent) {
+    ev.preventDefault();
+    let pos = this._getMouseEventCursorPosition(ev);
+    CursorStore.moveTo(pos.row, pos.col);
+    CursorStore.enterVisual();
+    this._setCursorPosition();
+  }
+
+  private _handleMouseMove(ev: React.MouseEvent) {
+    ev.preventDefault();
+    if (CursorStore.isInVisual()) {
+      let pos = this._getMouseEventCursorPosition(ev);
+      CursorStore.moveTo(pos.row, pos.col);
+      this._setCursorPosition();
+    }
+  }
+
+  private _handleMouseUp(ev: React.MouseEvent) {
+    ev.preventDefault();
+    CursorStore.exitVisual();
     this._setCursorPosition();
   }
 
