@@ -3,9 +3,10 @@ import CursorStore from '../stores/CursorStore';
 import FileStore from '../stores/FileStore';
 
 
-export default function(x: number, row: number) {
-  let line = FileStore.getLines()[row];
+export default function(x: number, y: number) {
+  let row = Math.floor(y / ConfigStore.getConfig().lineHeight);
   let col = 0;
+  let line = FileStore.getLines()[row] || '';
   let width = ConfigStore.getLineWidth(line);
   if (x > width) {
     col = line.length;

@@ -9,9 +9,8 @@ import ConfigStore from '../stores/ConfigStore';
 import CursorStore from '../stores/CursorStore';
 import FileStore from '../stores/FileStore';
 
-import clickOnCodeArea from '../actions/ClickOnCodeAreaAction';
-import clickOnCodeLine from '../actions/ClickOnCodeLineAction';
 import keyOnCursor from '../actions/KeyOnCursorAction';
+import mouseDownOnCodeArea from '../actions/MouseDownOnCodeAreaAction';
 
 import CodeLine from './CodeLine';
 import Cursor from './Cursor';
@@ -39,9 +38,8 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
       cursorPosition: CursorStore.getPosition(),
       cursorSelection: CursorStore.getSelection(),
     };
-    this._handleClick = this._handleClick.bind(this);
-    this._handleClickOnCodeLine = this._handleClickOnCodeLine.bind(this);
     this._handleKeyOnCursor = this._handleKeyOnCursor.bind(this);
+    this._handleMouseDown = this._handleMouseDown.bind(this);
 
     this.cursorFlashTimeoutId = undefined;
   }
@@ -54,17 +52,13 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
       lineHeight: cfg.lineHeight + 'px',
     };
 
-    let codeLineHandlers = {
-      handleClickOnLine: this._handleClickOnCodeLine
-    };
     let codeLines = this.state.lines.map((line: string, idx: number) => {
       return (
         <CodeLine key={idx}
             config={cfg}
             lineNum={idx}
             code={line}
-            selection={this.state.cursorSelection}
-            handlers={codeLineHandlers} />
+            selection={this.state.cursorSelection} />
       );
     });
 
@@ -76,7 +70,8 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
 
     return (
       <div className="code-area" style={style}
-          onClick={this._handleClick}>
+          ref={(ref) => this._ref = ref }
+          onMouseDown={this._handleMouseDown}>
         <Cursor
             config={cfg}
             flash={this.state.cursorFlash}
@@ -86,6 +81,8 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
       </div>
     );
   }
+
+  private _ref: HTMLDivElement
 
   private _setCursorFlashTimeout() {
     if (!this.cursorFlashTimeoutId) {
@@ -124,16 +121,10 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     });
   }
 
-  private _handleClick(ev: React.MouseEvent) {
+  private _handleMouseDown(ev: React.MouseEvent) {
     ev.stopPropagation();
-    clickOnCodeArea();
-    this._setCursorPosition();
-  }
-
-  private _handleClickOnCodeLine(ev: React.MouseEvent, lineNum: number) {
-    ev.stopPropagation();
-    let nativeEvent: any = ev.nativeEvent;  // Workaround for typescript check.
-    clickOnCodeLine(nativeEvent.offsetX, lineNum);
+    let rect = this._ref.getClientRects()[0];
+    mouseDownOnCodeArea(ev.clientX - rect.left, ev.clientY - rect.top);
     this._setCursorPosition();
   }
 

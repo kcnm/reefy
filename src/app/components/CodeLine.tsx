@@ -7,23 +7,17 @@ import CursorSelection from '../types/CursorSelection';
 import CursorStore from '../stores/CursorStore';
 
 
-interface CodeLineHandlers {
-  handleClickOnLine(ev: React.MouseEvent, lineNum: number): void;
-}
-
 interface CodeLineProps {
   config: Config;
   lineNum: number;
   code: string;
   selection: CursorSelection;
-  handlers: CodeLineHandlers;
 }
 
 export default class CodeLine extends React.Component<CodeLineProps, {}> {
 
   constructor(props: CodeLineProps) {
     super(props);
-    this._handleClick = this._handleClick.bind(this);
   }
 
   render() {
@@ -58,15 +52,10 @@ export default class CodeLine extends React.Component<CodeLineProps, {}> {
     }
 
     return (
-      <div className="code-line"
-          onClick={this._handleClick}>
+      <div className="code-line">
         {content}
       </div>
     );
-  }
-
-  private _handleClick(ev: React.MouseEvent) {
-    this.props.handlers.handleClickOnLine(ev, this.props.lineNum);
   }
 
   private _intersect(pos: CursorPosition) {

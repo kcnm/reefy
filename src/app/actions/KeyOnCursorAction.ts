@@ -67,7 +67,6 @@ let _createKeyDown = (ev: React.KeyboardEvent) => {
       CursorStore.enterVisual();
       break;
     default:
-      console.error('Unimplemented cursor key down event', ev);
   }
 };
 
@@ -102,7 +101,6 @@ let _createKeyUp = (ev: React.KeyboardEvent) => {
       CursorStore.exitVisual();
       break;
     default:
-      console.error('Unimplemented cursor key up event', ev);
   }
 };
 
@@ -118,6 +116,5 @@ export default function(ev: React.KeyboardEvent, type: KeyEvent) {
       _createKeyUp(ev);
       break;
     default:
-      console.error('Unrecognized key event type', type);
   }
 };
