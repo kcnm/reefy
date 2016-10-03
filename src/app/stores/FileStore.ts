@@ -12,19 +12,23 @@ let FileStore = {
   },
 
   getXYPositionByRC: function(row: number, col: number) {
-    let eof = row >= _lines.length;
-    row = Math.min(_lines.length, row);
-    col = Math.min(eof ? 0 : _lines[row].length, col);
+    row = Math.min(_lines.length - 1, row);
+    col = Math.min(_lines[row].length, col);
     return {
-      x: eof ? 0 : ConfigStore.getLineWidth(_lines[row].slice(0, col)),
+      x: ConfigStore.getLineWidth(_lines[row].slice(0, col)),
       y: ConfigStore.getConfig().lineHeight * row,
     };
   },
 
   getRCPositionByXY: function(x: number, y: number) {
     let row = Math.floor(y / ConfigStore.getConfig().lineHeight);
+    if (row >= _lines.length) {
+      row = _lines.length - 1;
+      return {row: row, col: _lines[row].length};
+    }
+
     let col = 0;
-    let line = _lines[row] || '';
+    let line = _lines[row];
     let width = ConfigStore.getLineWidth(line);
     if (x > width) {
       col = line.length;
