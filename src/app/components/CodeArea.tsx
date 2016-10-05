@@ -9,6 +9,7 @@ import ConfigStore from '../stores/ConfigStore';
 import CursorStore from '../stores/CursorStore';
 import FileStore from '../stores/FileStore';
 
+import insert from '../actions/InsertAction';
 import keyOnCursor from '../actions/KeyOnCursorAction';
 
 import CodeLine from './CodeLine';
@@ -41,6 +42,7 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     this._handleMouseDown = this._handleMouseDown.bind(this);
     this._handleMouseMove = this._handleMouseMove.bind(this);
     this._handleMouseUp = this._handleMouseUp.bind(this);
+    this._handlePaste = this._handlePaste.bind(this);
 
     this.cursorFlashTimeoutId = undefined;
   }
@@ -83,6 +85,14 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
         {codeLines}
       </div>
     );
+  }
+
+  componentDidMount() {
+    this._ref.addEventListener('paste', this._handlePaste);
+  }
+
+  componentWillUnmount() {
+    this._ref.removeEventListener('paste', this._handlePaste);
   }
 
   private _ref: HTMLDivElement
@@ -157,6 +167,13 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
   private _handleKeyOnCursor(ev: React.KeyboardEvent, type: KeyEvent) {
     keyOnCursor(ev, type);
     this._setLinesAndCursorPosition();
+  }
+
+  private _handlePaste(ev: ClipboardEvent) {
+    let text = ev.clipboardData.getData('text/plain');
+    if (text) {
+      insert(text);
+    }
   }
 
 }

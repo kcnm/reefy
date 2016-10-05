@@ -7,17 +7,9 @@ import KeyEvent from '../types/KeyEvent';
 import CursorStore from '../stores/CursorStore';
 import FileStore from '../stores/FileStore';
 
+import maybeRemoveSelection from './MaybeRemoveSelectionAction';
+import insert from './InsertAction';
 
-let _maybeRemoveSelection = () => {
-  let sel = CursorStore.getSelection();
-  if (sel) {
-    FileStore.removeSelection(sel);
-    CursorStore.clearSelection();
-    CursorStore.moveTo(sel.begin.row, sel.begin.col);
-    return true;
-  }
-  return false;
-};
 
 let _createKeyDown = (ev: React.KeyboardEvent) => {
   if (ev.ctrlKey) {
@@ -51,14 +43,14 @@ let _createKeyDown = (ev: React.KeyboardEvent) => {
       CursorStore.moveTo(pos.row, line ? line.length : 0);
       break;
     case Key.BACKSPACE:
-      if (!_maybeRemoveSelection()) {
+      if (!maybeRemoveSelection()) {
         pos = CursorStore.getPosition();
         CursorStore.moveHorz(-1);
         FileStore.remove(pos.row, pos.col);
       }
       break;
     case Key.DELETE:
-      if (!_maybeRemoveSelection()) {
+      if (!maybeRemoveSelection()) {
         pos = CursorStore.getPosition();
         FileStore.remove(pos.row, pos.col);
       }
@@ -72,10 +64,7 @@ let _createKeyDown = (ev: React.KeyboardEvent) => {
 
 let _createKeyPress = (ev: React.KeyboardEvent) => {
   let key = ev.key;
-  _maybeRemoveSelection();
-  let pos = CursorStore.getPosition();
-  pos = FileStore.insert(pos.row, pos.col, key == Key.ENTER ? '\n' : key);
-  CursorStore.moveTo(pos.row, pos.col);
+  insert(key == Key.ENTER ? '\n' : key);
   // Removes possible selection for upper characters.
   CursorStore.clearSelection();
 };
