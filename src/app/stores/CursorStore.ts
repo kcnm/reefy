@@ -104,6 +104,10 @@ let CursorStore = {
 
   clearSelection: function() {
     _vis.select = false;
+    _vis.begin = {
+      row: _pos.row,
+      col: _pos.col,
+    };
   },
 
 };
