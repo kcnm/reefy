@@ -74,13 +74,8 @@ let _createKeyPress = (ev: React.KeyboardEvent) => {
   let key = ev.key;
   _maybeRemoveSelection();
   let pos = CursorStore.getPosition();
-  if (key == Key.ENTER) {
-    FileStore.insertEnter(pos.row, pos.col);
-    CursorStore.moveTo(pos.row + 1, 0);
-  } else {
-    FileStore.insert(pos.row, pos.col, key);
-    CursorStore.moveHorz(1);
-  }
+  pos = FileStore.insert(pos.row, pos.col, key == Key.ENTER ? '\n' : key);
+  CursorStore.moveTo(pos.row, pos.col);
   // Removes possible selection for upper characters.
   CursorStore.clearSelection();
 };

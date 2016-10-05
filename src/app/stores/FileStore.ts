@@ -46,14 +46,27 @@ let FileStore = {
     return {row: row, col: col};
   },
 
-  insert: function(row: number, col: number, key: string) {
+  insert: function(row: number, col: number, text: string) {
+    let segments = text.split('\n');
+    let nseg = segments.length;
     let line = _lines[row];
-    _lines[row] = line.slice(0, col) + key + line.slice(col);
-  },
-
-  insertEnter: function(row: number, col: number) {
-    let line = _lines[row];
-    _lines.splice(row, 1, line.slice(0, col), line.slice(col));
+    // Inserts text in a single line.
+    if (nseg == 1) {
+      _lines[row] = line.slice(0, col) + segments[0] + line.slice(col);
+      return {
+        row: row,
+        col: col + segments[0].length,
+      };
+    }
+    // Inserts multiple lines.
+    _lines.splice(row, 1,
+        line.slice(0, col) + segments[0],
+        ...segments.slice(1, nseg - 1),
+        segments[nseg - 1] + line.slice(col));
+    return {
+      row: row + nseg - 1,
+      col: segments[nseg - 1].length,
+    };
   },
 
   remove: function(row: number, col: number) {
