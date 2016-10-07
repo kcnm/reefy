@@ -102,6 +102,21 @@ let CursorStore = {
     _vis.active = false;
   },
 
+  getSelectedText: function() {
+    let sel = this.getSelection();
+    if (!sel) {
+      return '';
+    }
+    let lines = FileStore.getLines();
+    if (sel.begin.row == sel.end.row) {
+      return lines[sel.begin.row].slice(sel.begin.col, sel.end.col);
+    }
+    let beginLine = lines[sel.begin.row].slice(sel.begin.col);
+    let midLines = lines.slice(sel.begin.row + 1, sel.end.row).join('\n');
+    let endLine = lines[sel.end.row].slice(0, sel.end.col);
+    return beginLine + '\n' + midLines + (midLines ? '\n' : '') + endLine;
+  },
+
   clearSelection: function() {
     _vis.select = false;
     _vis.begin = {

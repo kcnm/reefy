@@ -11,6 +11,7 @@ import FileStore from '../stores/FileStore';
 
 import insert from '../actions/InsertAction';
 import keyOnCursor from '../actions/KeyOnCursorAction';
+import maybeRemoveSelection from '../actions/MaybeRemoveSelectionAction';
 
 import CodeLine from './CodeLine';
 import Cursor from './Cursor';
@@ -42,6 +43,8 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     this._handleMouseDown = this._handleMouseDown.bind(this);
     this._handleMouseMove = this._handleMouseMove.bind(this);
     this._handleMouseUp = this._handleMouseUp.bind(this);
+    this._handleCopy = this._handleCopy.bind(this);
+    this._handleCut = this._handleCut.bind(this);
     this._handlePaste = this._handlePaste.bind(this);
 
     this.cursorFlashTimeoutId = undefined;
@@ -88,11 +91,15 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
   }
 
   componentDidMount() {
+    this._ref.addEventListener('copy', this._handleCopy);
+    this._ref.addEventListener('cut', this._handleCut);
     this._ref.addEventListener('paste', this._handlePaste);
   }
 
   componentWillUnmount() {
     this._ref.removeEventListener('paste', this._handlePaste);
+    this._ref.removeEventListener('cut', this._handleCut);
+    this._ref.removeEventListener('copy', this._handleCopy);
   }
 
   private _ref: HTMLDivElement
@@ -167,6 +174,23 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
   private _handleKeyOnCursor(ev: React.KeyboardEvent, type: KeyEvent) {
     keyOnCursor(ev, type);
     this._setLinesAndCursorPosition();
+  }
+
+  private _handleCopy(ev: ClipboardEvent) {
+    let text = CursorStore.getSelectedText();
+    if (text) {
+      ev.clipboardData.setData('text/plain', text);
+    }
+    ev.preventDefault();
+  }
+
+  private _handleCut(ev: ClipboardEvent) {
+    let text = CursorStore.getSelectedText();
+    maybeRemoveSelection();
+    if (text) {
+      ev.clipboardData.setData('text/plain', text);
+    }
+    ev.preventDefault();
   }
 
   private _handlePaste(ev: ClipboardEvent) {
