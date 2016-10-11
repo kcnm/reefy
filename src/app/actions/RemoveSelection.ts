@@ -1,5 +1,5 @@
-import CursorStore from '../stores/CursorStore';
 import FileStore from '../stores/FileStore';
+import CursorStore from '../stores/CursorStore';
 
 
 export default function() {

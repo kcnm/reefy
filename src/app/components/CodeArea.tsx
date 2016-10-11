@@ -3,16 +3,14 @@ import * as React from 'react';
 import Config from '../types/Config';
 import CursorPosition from '../types/CursorPosition';
 import CursorSelection from '../types/CursorSelection';
-import KeyEvent from '../types/KeyEvent';
-
 import ConfigStore from '../stores/ConfigStore';
-import CursorStore from '../stores/CursorStore';
 import FileStore from '../stores/FileStore';
-
-import insert from '../actions/InsertAction';
-import keyOnCursor from '../actions/KeyOnCursorAction';
-import maybeRemoveSelection from '../actions/MaybeRemoveSelectionAction';
-
+import CursorStore from '../stores/CursorStore';
+import removeSelection from '../actions/RemoveSelection';
+import insert from '../actions/Insert';
+import cursorKeyDown from '../actions/cursor/KeyDown';
+import cursorKeyPress from '../actions/cursor/KeyPress';
+import cursorKeyUp from '../actions/cursor/KeyUp';
 import CodeLine from './CodeLine';
 import Cursor from './Cursor';
 
@@ -39,13 +37,12 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
       cursorPosition: CursorStore.getPosition(),
       cursorSelection: CursorStore.getSelection(),
     };
-    this._handleKeyOnCursor = this._handleKeyOnCursor.bind(this);
     this._handleMouseDown = this._handleMouseDown.bind(this);
     this._handleMouseMove = this._handleMouseMove.bind(this);
     this._handleMouseUp = this._handleMouseUp.bind(this);
-    this._handleCopy = this._handleCopy.bind(this);
-    this._handleCut = this._handleCut.bind(this);
-    this._handlePaste = this._handlePaste.bind(this);
+    this._handleCursorKeyDown = this._handleCursorKeyDown.bind(this);
+    this._handleCursorKeyPress = this._handleCursorKeyPress.bind(this);
+    this._handleCursorKeyUp = this._handleCursorKeyUp.bind(this);
 
     this.cursorFlashTimeoutId = undefined;
   }
@@ -69,7 +66,9 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     });
 
     let cursorHandlers = {
-      handleKeyEvent: this._handleKeyOnCursor
+      handleKeyDown: this._handleCursorKeyDown,
+      handleKeyPress: this._handleCursorKeyPress,
+      handleKeyUp: this._handleCursorKeyUp,
     };
 
     this._setCursorFlashTimeout();
@@ -171,8 +170,18 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     this._setCursorPosition();
   }
 
-  private _handleKeyOnCursor(ev: React.KeyboardEvent, type: KeyEvent) {
-    keyOnCursor(ev, type);
+  private _handleCursorKeyDown(ev: React.KeyboardEvent) {
+    cursorKeyDown(ev);
+    this._setLinesAndCursorPosition();
+  }
+
+  private _handleCursorKeyPress(ev: React.KeyboardEvent) {
+    cursorKeyPress(ev);
+    this._setLinesAndCursorPosition();
+  }
+
+  private _handleCursorKeyUp(ev: React.KeyboardEvent) {
+    cursorKeyUp(ev);
     this._setLinesAndCursorPosition();
   }
 
@@ -186,7 +195,7 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
 
   private _handleCut(ev: ClipboardEvent) {
     let text = CursorStore.getSelectedText();
-    maybeRemoveSelection();
+    removeSelection();
     if (text) {
       ev.clipboardData.setData('text/plain', text);
     }
