@@ -29,7 +29,7 @@ export default class Cursor extends React.Component<CursorProps, {}> {
 
   render() {
     let cfg = this.props.config;
-    let pos = CursorStore.getPxPosition();
+    let pos = CursorStore.getPositionPx();
     let cursorClassName = "cursor " + (this.props.flash ? "flash" : "");
     let cursorStyle = {
       left: pos.x,

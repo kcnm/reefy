@@ -36,23 +36,23 @@ let _createKeyDown = (ev: React.KeyboardEvent) => {
       CursorStore.moveHorz(1);
       break;
     case Key.HOME:
-      CursorStore.moveTo(pos.row, 0);
+      CursorStore.moveHorz(-pos.col);
       break;
     case Key.END:
       let line = FileStore.getLines()[pos.row];
-      CursorStore.moveTo(pos.row, line ? line.length : 0);
+      CursorStore.moveHorz(line.length - pos.col);
       break;
     case Key.BACKSPACE:
       if (!maybeRemoveSelection()) {
         pos = CursorStore.getPosition();
         CursorStore.moveHorz(-1);
-        FileStore.remove(pos.row, pos.col);
+        FileStore.remove(pos);
       }
       break;
     case Key.DELETE:
       if (!maybeRemoveSelection()) {
         pos = CursorStore.getPosition();
-        FileStore.remove(pos.row, pos.col);
+        FileStore.remove(pos);
       }
       break;
     case Key.SHIFT:

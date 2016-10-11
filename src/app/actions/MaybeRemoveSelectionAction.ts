@@ -7,7 +7,7 @@ export default function() {
   if (sel) {
     FileStore.removeSelection(sel);
     CursorStore.clearSelection();
-    CursorStore.moveTo(sel.begin.row, sel.begin.col);
+    CursorStore.moveTo(sel.begin);
     return true;
   }
   return false;

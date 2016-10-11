@@ -1,3 +1,6 @@
+import CursorPosition from '../types/CursorPosition';
+import CursorPositionPx from '../types/CursorPositionPx';
+import ConfigStore from './ConfigStore';
 import FileStore from './FileStore';
 
 
@@ -21,8 +24,41 @@ let CursorStore = {
     return _pos;
   },
 
-  getPxPosition: function() {
-    return FileStore.getXYPositionByRC(_pos.row, _pos.col);
+  getPositionByPx: function(posPx: CursorPositionPx) {
+    let lines = FileStore.getLines();
+    let row = Math.floor(posPx.y / ConfigStore.getConfig().lineHeight);
+    if (row >= lines.length) {
+      row = lines.length - 1;
+      return {row: row, col: lines[row].length};
+    }
+
+    let col = 0;
+    let line = lines[row];
+    let width = ConfigStore.getLineWidth(line);
+    if (posPx.x > width) {
+      col = line.length;
+    } else {
+      let minDist = posPx.x;
+      for (let i = 1; i < line.length; ++i) {
+        let p = ConfigStore.getLineWidth(line.substring(0, i));
+        let d = Math.abs(posPx.x - p);
+        if (d < minDist) {
+          minDist = d;
+          col = i;
+        }
+      }
+    }
+    return {row: row, col: col};
+  },
+
+  getPositionPx: function() {
+    let lines = FileStore.getLines();
+    let row = Math.min(lines.length - 1, _pos.row);
+    let col = Math.min(lines[_pos.row].length, _pos.col);
+    return {
+      x: ConfigStore.getLineWidth(lines[row].slice(0, col)),
+      y: ConfigStore.getConfig().lineHeight * row,
+    }
   },
 
   getSelection: function() {
@@ -38,16 +74,16 @@ let CursorStore = {
     }
   },
 
-  moveTo: function(row: number, col: number) {
-    _pos.row = row;
-    _pos.col = col;
+  moveTo: function(pos: CursorPosition) {
+    _pos.row = pos.row;
+    _pos.col = pos.col;
     _vis.select = _vis.active;
   },
 
   moveToLast: function() {
     let lines = FileStore.getLines();
     let row = lines.length - 1;
-    this.moveTo(row, lines[row].length);
+    this.moveTo({row: row, col: lines[row].length});
   },
 
   moveHorz: function(colDiff: number) {
@@ -64,7 +100,7 @@ let CursorStore = {
       col -= lines[row++].length + 1;
     }
     col = Math.min(col, lines[row].length || 0);
-    this.moveTo(row, col);
+    this.moveTo({row: row, col: col});
   },
 
   moveVert: function(rowDiff: number) {
@@ -73,7 +109,7 @@ let CursorStore = {
     row = Math.max(row, 0);
     row = Math.min(row, lines.length - 1);
     let col = Math.min(_pos.col, lines[row].length);
-    this.moveTo(row, col);
+    this.moveTo({row: row, col: col});
   },
 
   isInVisual: function() {

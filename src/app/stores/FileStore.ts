@@ -1,6 +1,6 @@
-import ConfigStore from './ConfigStore';
-
+import CursorPosition from '../types/CursorPosition';
 import CursorSelection from '../types/CursorSelection';
+import ConfigStore from './ConfigStore';
 
 
 let _lines = ['hello', 'world'];
@@ -11,72 +11,38 @@ let FileStore = {
     return _lines;
   },
 
-  getXYPositionByRC: function(row: number, col: number) {
-    row = Math.min(_lines.length - 1, row);
-    col = Math.min(_lines[row].length, col);
-    return {
-      x: ConfigStore.getLineWidth(_lines[row].slice(0, col)),
-      y: ConfigStore.getConfig().lineHeight * row,
-    };
-  },
-
-  getRCPositionByXY: function(x: number, y: number) {
-    let row = Math.floor(y / ConfigStore.getConfig().lineHeight);
-    if (row >= _lines.length) {
-      row = _lines.length - 1;
-      return {row: row, col: _lines[row].length};
-    }
-
-    let col = 0;
-    let line = _lines[row];
-    let width = ConfigStore.getLineWidth(line);
-    if (x > width) {
-      col = line.length;
-    } else {
-      let minDist = x;
-      for (let i = 1; i < line.length; ++i) {
-        let p = ConfigStore.getLineWidth(line.substring(0, i));
-        let d = Math.abs(x - p);
-        if (d < minDist) {
-          minDist = d;
-          col = i;
-        }
-      }
-    }
-    return {row: row, col: col};
-  },
-
-  insert: function(row: number, col: number, text: string) {
+  insert: function(pos: CursorPosition, text: string) {
     let segments = text.split('\n');
     let nseg = segments.length;
-    let line = _lines[row];
+    let line = _lines[pos.row];
     // Inserts text in a single line.
     if (nseg == 1) {
-      _lines[row] = line.slice(0, col) + segments[0] + line.slice(col);
+      _lines[pos.row] =
+          line.slice(0, pos.col) + segments[0] + line.slice(pos.col);
       return {
-        row: row,
-        col: col + segments[0].length,
+        row: pos.row,
+        col: pos.col + segments[0].length,
       };
     }
     // Inserts multiple lines.
-    _lines.splice(row, 1,
-        line.slice(0, col) + segments[0],
+    _lines.splice(pos.row, 1,
+        line.slice(0, pos.col) + segments[0],
         ...segments.slice(1, nseg - 1),
-        segments[nseg - 1] + line.slice(col));
+        segments[nseg - 1] + line.slice(pos.col));
     return {
-      row: row + nseg - 1,
+      row: pos.row + nseg - 1,
       col: segments[nseg - 1].length,
     };
   },
 
-  remove: function(row: number, col: number) {
-    let line = _lines[row];
-    if (col < 0) {
-      _lines.splice(row - 1, 2, (_lines[row - 1] || '') + line);
-    } else if (col >= line.length) {
-      _lines.splice(row, 2, line + (_lines[row + 1] || ''));
+  remove: function(pos: CursorPosition) {
+    let line = _lines[pos.row];
+    if (pos.col < 0) {
+      _lines.splice(pos.row - 1, 2, (_lines[pos.row - 1] || '') + line);
+    } else if (pos.col >= line.length) {
+      _lines.splice(pos.row, 2, line + (_lines[pos.row + 1] || ''));
     } else {
-      _lines[row] = line.slice(0, col) + line.slice(col + 1);
+      _lines[pos.row] = line.slice(0, pos.col) + line.slice(pos.col + 1);
     }
   },
 

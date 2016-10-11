@@ -145,13 +145,13 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     let rect = this._ref.getClientRects()[0];
     let x = ev.clientX - rect.left;
     let y = ev.clientY - rect.top;
-    return FileStore.getRCPositionByXY(x, y);
+    return CursorStore.getPositionByPx({x: x, y: y});
   }
 
   private _handleMouseDown(ev: React.MouseEvent) {
     ev.preventDefault();
     let pos = this._getMouseEventCursorPosition(ev);
-    CursorStore.moveTo(pos.row, pos.col);
+    CursorStore.moveTo(pos);
     CursorStore.enterVisual();
     this._setCursorPosition();
   }
@@ -160,7 +160,7 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     ev.preventDefault();
     if (CursorStore.isInVisual()) {
       let pos = this._getMouseEventCursorPosition(ev);
-      CursorStore.moveTo(pos.row, pos.col);
+      CursorStore.moveTo(pos);
       this._setCursorPosition();
     }
   }
