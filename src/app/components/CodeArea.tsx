@@ -47,6 +47,7 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
       fontSize: cfg.fontSize,
       fontFamily: cfg.fontFamily,
       lineHeight: cfg.lineHeight + 'px',
+      tabSize: cfg.tabSize,
     };
 
     let codeLines = this.state.lines.map((line: string, idx: number) => {
