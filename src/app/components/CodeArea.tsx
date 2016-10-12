@@ -19,21 +19,17 @@ interface CodeAreaState {
   config?: Config;
   lines?: string[];
 
-  cursorFlash?: boolean;
   cursorPosition?: CursorPosition;
   cursorSelection?: CursorSelection;
 }
 
 export default class CodeArea extends React.Component<{}, CodeAreaState> {
 
-  cursorFlashTimeoutId: number;
-
   constructor(props: {}) {
     super(props);
     this.state = {
       config: ConfigStore.getConfig(),
       lines: FileStore.getLines(),
-      cursorFlash: true,
       cursorPosition: CursorStore.getPosition(),
       cursorSelection: CursorStore.getSelection(),
     };
@@ -43,8 +39,6 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
     this._handleCursorKeyDown = this._handleCursorKeyDown.bind(this);
     this._handleCursorKeyPress = this._handleCursorKeyPress.bind(this);
     this._handleCursorKeyUp = this._handleCursorKeyUp.bind(this);
-
-    this.cursorFlashTimeoutId = undefined;
   }
 
   render() {
@@ -71,8 +65,6 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
       handleKeyUp: this._handleCursorKeyUp,
     };
 
-    this._setCursorFlashTimeout();
-
     return (
       <div className="code-area" style={style}
           ref={(ref) => this._ref = ref }
@@ -81,7 +73,6 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
           onMouseUp={this._handleMouseUp}>
         <Cursor
             config={cfg}
-            flash={this.state.cursorFlash}
             position={this.state.cursorPosition}
             handlers={cursorHandlers} />
         {codeLines}
@@ -103,38 +94,16 @@ export default class CodeArea extends React.Component<{}, CodeAreaState> {
 
   private _ref: HTMLDivElement
 
-  private _setCursorFlashTimeout() {
-    if (!this.cursorFlashTimeoutId) {
-      this.cursorFlashTimeoutId = setTimeout(() => {
-        this.cursorFlashTimeoutId = undefined;
-        this.setState({
-          cursorFlash: !this.state.cursorFlash,
-        });
-      }, 1000);
-    }
-  }
-
-  private _clearCursorFlashTimeout(flash = true) {
-    if (this.cursorFlashTimeoutId) {
-      clearTimeout(this.cursorFlashTimeoutId);
-      this.cursorFlashTimeoutId = undefined;
-    }
-  }
-
   private _setCursorPosition() {
-    this._clearCursorFlashTimeout();
     this.setState({
-      cursorFlash: true,
       cursorPosition: CursorStore.getPosition(),
       cursorSelection: CursorStore.getSelection(),
     });
   }
 
   private _setLinesAndCursorPosition() {
-    this._clearCursorFlashTimeout();
     this.setState({
       lines: FileStore.getLines(),
-      cursorFlash: true,
       cursorPosition: CursorStore.getPosition(),
       cursorSelection: CursorStore.getSelection(),
     });
