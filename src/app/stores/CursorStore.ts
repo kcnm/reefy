@@ -33,14 +33,14 @@ let CursorStore = {
     }
 
     let col = 0;
-    let line = lines[row];
-    let width = ConfigStore.getLineWidth(line);
+    let expanded = FileStore.getExpandedLine(row);
+    let width = ConfigStore.getLineWidth(expanded);
     if (posPx.x > width) {
-      col = line.length;
+      col = expanded.length;
     } else {
       let minDist = posPx.x;
-      for (let i = 1; i < line.length; ++i) {
-        let p = ConfigStore.getLineWidth(line.substring(0, i));
+      for (let i = 1; i < expanded.length; ++i) {
+        let p = ConfigStore.getLineWidth(expanded.substring(0, i));
         let d = Math.abs(posPx.x - p);
         if (d < minDist) {
           minDist = d;
@@ -54,9 +54,10 @@ let CursorStore = {
   getPositionPx: function() {
     let lines = FileStore.getLines();
     let row = Math.min(lines.length - 1, _pos.row);
-    let col = Math.min(lines[_pos.row].length, _pos.col);
+    let expanded = FileStore.getExpandedLine(row);
+    let col = Math.min(expanded.length, _pos.col);
     return {
-      x: ConfigStore.getLineWidth(lines[row].slice(0, col)),
+      x: ConfigStore.getLineWidth(expanded.substring(0, col)),
       y: ConfigStore.getConfig().lineHeight * row,
     }
   },
@@ -74,10 +75,13 @@ let CursorStore = {
     }
   },
 
-  moveTo: function(pos: CursorPosition) {
+  moveTo: function(pos: CursorPosition, rndDir=0) {
     _pos.row = pos.row;
     _pos.col = pos.col;
     _vis.select = _vis.active;
+    // Adjusts cursor position for '\t'.
+    let expanded = FileStore.expandLineTo(_pos, rndDir).expanded;
+    _pos.col = expanded.length;
   },
 
   moveToLast: function() {
@@ -86,21 +90,21 @@ let CursorStore = {
     this.moveTo({row: row, col: lines[row].length});
   },
 
-  moveHorz: function(colDiff: number) {
+  moveHorz: function(charDiff: number) {
     let lines = FileStore.getLines();
     let row = _pos.row;
-    let col = _pos.col + colDiff;
+    let idx = FileStore.expandLineTo(_pos, 0).charIndex + charDiff;
     // Moves to lines above if necessary.
-    while (row > 0 && col < 0) {
-      col += lines[row--].length + 1;
+    while (row > 0 && idx < 0) {
+      idx += lines[--row].length + 1;
     }
-    col = Math.max(col, 0);
+    idx = Math.max(idx, 0);
     // Move to lines below if necessary.
-    while (row < lines.length - 1 && col > lines[row].length) {
-      col -= lines[row++].length + 1;
+    while (row < lines.length - 1 && idx > lines[row].length) {
+      idx -= lines[row++].length + 1;
     }
-    col = Math.min(col, lines[row].length || 0);
-    this.moveTo({row: row, col: col});
+    idx = Math.min(idx, lines[row].length || 0);
+    this.moveTo({row: row, col: FileStore.getCol(row, idx)}, charDiff);
   },
 
   moveVert: function(rowDiff: number) {
@@ -145,11 +149,11 @@ let CursorStore = {
     }
     let lines = FileStore.getLines();
     if (sel.begin.row == sel.end.row) {
-      return lines[sel.begin.row].slice(sel.begin.col, sel.end.col);
+      return lines[sel.begin.row].substring(sel.begin.col, sel.end.col);
     }
-    let beginLine = lines[sel.begin.row].slice(sel.begin.col);
+    let beginLine = lines[sel.begin.row].substring(sel.begin.col);
     let midLines = lines.slice(sel.begin.row + 1, sel.end.row).join('\n');
-    let endLine = lines[sel.end.row].slice(0, sel.end.col);
+    let endLine = lines[sel.end.row].substring(0, sel.end.col);
     return beginLine + '\n' + midLines + (midLines ? '\n' : '') + endLine;
   },
 
