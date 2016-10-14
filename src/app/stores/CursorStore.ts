@@ -29,7 +29,7 @@ let CursorStore = {
     let row = Math.floor(posPx.y / ConfigStore.getConfig().lineHeight);
     if (row >= lines.length) {
       row = lines.length - 1;
-      return {row: row, col: lines[row].length};
+      return {row: row, col: FileStore.getExpandedLine(row).length};
     }
 
     let col = 0;
@@ -87,7 +87,7 @@ let CursorStore = {
   moveToLast: function() {
     let lines = FileStore.getLines();
     let row = lines.length - 1;
-    this.moveTo({row: row, col: lines[row].length});
+    this.moveTo({row: row, col: FileStore.getExpandedLine(row).length});
   },
 
   moveHorz: function(charDiff: number) {
@@ -112,7 +112,7 @@ let CursorStore = {
     let row = _pos.row + rowDiff;
     row = Math.max(row, 0);
     row = Math.min(row, lines.length - 1);
-    let col = Math.min(_pos.col, lines[row].length);
+    let col = Math.min(_pos.col, FileStore.getExpandedLine(row).length);
     this.moveTo({row: row, col: col});
   },
 

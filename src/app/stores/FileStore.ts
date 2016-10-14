@@ -72,23 +72,25 @@ let FileStore = {
     let lines = text.split('\n');
     let nseg = lines.length;
     let line = _lines[pos.row];
+    let idx = this.expandLineTo(pos, 0).charIndex;
+    let row = pos.row + nseg - 1;
     // Inserts text in a single line.
     if (nseg == 1) {
       _lines[pos.row] =
-          line.substring(0, pos.col) + lines[0] + line.substring(pos.col);
+          line.substring(0, idx) + lines[0] + line.substring(idx);
       return {
-        row: pos.row,
-        col: pos.col + lines[0].length,
+        row: row,
+        col: this.getCol(row, idx + lines[0].length),
       };
     }
     // Inserts multiple lines.
     _lines.splice(pos.row, 1,
-        line.substring(0, pos.col) + lines[0],
+        line.substring(0, idx) + lines[0],
         ...lines.slice(1, nseg - 1),
-        lines[nseg - 1] + line.substring(pos.col));
+        lines[nseg - 1] + line.substring(idx));
     return {
-      row: pos.row + nseg - 1,
-      col: lines[nseg - 1].length,
+      row: row,
+      col: this.getCol(row, lines[nseg - 1].length),
     };
   },
 
@@ -96,11 +98,11 @@ let FileStore = {
     let line = _lines[pos.row];
     if (pos.col < 0) {
       _lines.splice(pos.row - 1, 2, (_lines[pos.row - 1] || '') + line);
-    } else if (pos.col >= line.length) {
+    } else if (pos.col >= this.getExpandedLine(pos.row).length) {
       _lines.splice(pos.row, 2, line + (_lines[pos.row + 1] || ''));
     } else {
-    _lines[pos.row] =
-        line.substring(0, pos.col) + line.substring(pos.col + 1);
+      let idx = this.expandLineTo(pos, 0).charIndex;
+      _lines[pos.row] = line.substring(0, idx) + line.substring(idx + 1);
     }
   },
 

@@ -9,6 +9,7 @@ let Key = {
   BACKSPACE: 'Backspace',
   DELETE: 'Delete',
   SHIFT: 'Shift',
+  TAB: 'Tab',
 };
 
 export default Key;
