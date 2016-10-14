@@ -148,12 +148,14 @@ let CursorStore = {
       return '';
     }
     let lines = FileStore.getLines();
+    let beginIdx = FileStore.expandLineTo(sel.begin, 0).charIndex;
+    let endIdx = FileStore.expandLineTo(sel.end, 0).charIndex;
     if (sel.begin.row == sel.end.row) {
-      return lines[sel.begin.row].substring(sel.begin.col, sel.end.col);
+      return lines[sel.begin.row].substring(beginIdx, endIdx);
     }
-    let beginLine = lines[sel.begin.row].substring(sel.begin.col);
+    let beginLine = lines[sel.begin.row].substring(beginIdx);
     let midLines = lines.slice(sel.begin.row + 1, sel.end.row).join('\n');
-    let endLine = lines[sel.end.row].substring(0, sel.end.col);
+    let endLine = lines[sel.end.row].substring(0, endIdx);
     return beginLine + '\n' + midLines + (midLines ? '\n' : '') + endLine;
   },
 

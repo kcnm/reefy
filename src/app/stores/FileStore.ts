@@ -110,11 +110,12 @@ let FileStore = {
     if (sel) {
       let beginLine = _lines[sel.begin.row];
       let endLine = _lines[sel.end.row];
+      let beginIdx = FileStore.expandLineTo(sel.begin, 0).charIndex;
+      let endIdx = FileStore.expandLineTo(sel.end, 0).charIndex;
       _lines.splice(
           sel.begin.row,
           sel.end.row - sel.begin.row + 1,
-          beginLine.substring(0, sel.begin.col) +
-              endLine.substring(sel.end.col));
+          beginLine.substring(0, beginIdx) + endLine.substring(endIdx));
     }
   },
 
