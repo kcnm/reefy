@@ -7,5 +7,5 @@ export default function(text: string) {
   removeSelection();
   let pos = CursorStore.getPosition();
   pos = FileStore.insert(pos, text);
-  CursorStore.moveTo(pos);
+  CursorStore.moveTo(pos, text.length);
 };

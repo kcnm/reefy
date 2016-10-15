@@ -2,6 +2,7 @@ let _config = {
   fontSize: 12,
   fontFamily: 'monospace',
   lineHeight: 14,
+  tabSize: 4,
 };
 
 let ConfigStore = {
