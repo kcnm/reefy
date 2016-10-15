@@ -59,7 +59,17 @@ export default function(ev: React.KeyboardEvent) {
       break;
     case Key.TAB:
       ev.preventDefault();
-      insert('\t');
+      if (ev.shiftKey) {
+        let colEaten = FileStore.eatTab(pos);
+        CursorStore.moveTo({
+          row: pos.row,
+          col: Math.max(0, pos.col - colEaten),
+        });
+        // Removes possible selection.
+        CursorStore.clearSelection();
+      } else {
+        insert('\t');
+      }
       break;
     default:
   }

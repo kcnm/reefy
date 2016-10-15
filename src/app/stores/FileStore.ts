@@ -3,7 +3,11 @@ import CursorSelection from '../types/CursorSelection';
 import ConfigStore from './ConfigStore';
 
 
-let _lines = ['\thello', 'w\torld'];
+let _lines = ['hello', 'world'];
+
+let _isSpaceOrTab = function(c: string) {
+  return c == ' ' || c == '\t';
+};
 
 let FileStore = {
 
@@ -117,6 +121,27 @@ let FileStore = {
           sel.end.row - sel.begin.row + 1,
           beginLine.substring(0, beginIdx) + endLine.substring(endIdx));
     }
+  },
+
+  eatTab: function(pos: CursorPosition) {
+    let line = _lines[pos.row];
+    let tabSize = ConfigStore.getConfig().tabSize;
+    let colEaten = 0;
+    let chrEaten = 0;
+    while (line.length > colEaten) {
+      if (colEaten >= tabSize) {
+        break;
+      } else if (line[colEaten] == ' ') {
+        colEaten++;
+      } else if (line[colEaten] == '\t') {
+        colEaten = tabSize;
+      } else {
+        break;
+      }
+      chrEaten++;
+    }
+    _lines[pos.row] = line.substring(chrEaten);
+    return colEaten;
   },
 
 };
